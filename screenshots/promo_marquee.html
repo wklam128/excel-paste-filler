@@ -5,74 +5,72 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{width:1400px;height:560px;overflow:hidden;font-family:system-ui,-apple-system,sans-serif;background:#0b3d22;position:relative}
-
-/* grid */
 .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:40px 40px}
+.blob1{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(34,197,94,.14) 0%,transparent 65%);top:-200px;right:-100px}
+.blob2{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 65%);bottom:-200px;left:-100px}
+.blob3{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(29,111,66,.35) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%)}
+.layout{position:relative;z-index:2;display:flex;align-items:center;height:100%;padding:0 80px;gap:70px}
 
-/* glow blobs */
-.blob1{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(34,197,94,.14) 0%,transparent 65%);top:-200px;right:-100px;pointer-events:none}
-.blob2{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 65%);bottom:-200px;left:-100px;pointer-events:none}
-.blob3{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(29,111,66,.35) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
-
-/* layout: left text | right visual */
-.layout{position:relative;z-index:2;display:flex;align-items:center;height:100%;padding:0 90px;gap:80px}
-
-/* ── LEFT ── */
-.left{flex:0 0 auto;max-width:500px}
-.logo-row{display:flex;align-items:center;gap:14px;margin-bottom:28px}
-.logo-box{width:56px;height:56px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.3)}
-.product-name{font-size:20px;font-weight:800;color:rgba(255,255,255,.9);letter-spacing:-.2px}
+/* LEFT */
+.left{flex:0 0 auto;max-width:480px}
+.logo-row{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.logo-box{width:54px;height:54px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+.product-name{font-size:19px;font-weight:800;color:rgba(255,255,255,.9)}
 .product-ver{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
-
-.headline{font-size:42px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:-.8px;margin-bottom:18px}
+.headline{font-size:40px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:-.8px;margin-bottom:16px}
 .headline span{color:#4ade80}
-.sub{font-size:16px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:32px;max-width:420px}
-
-.pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px}
-.pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:6px 14px;font-size:13px;color:rgba(255,255,255,.8);font-weight:600}
-.pill-icon{font-size:14px}
-
+.sub{font-size:15px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:26px;max-width:420px}
+.pills{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:30px}
+.pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:5px 13px;font-size:12px;color:rgba(255,255,255,.8);font-weight:600}
 .cta-row{display:flex;align-items:center;gap:16px}
-.btn-cta{display:inline-flex;align-items:center;gap:8px;background:#22c55e;color:#fff;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:800;box-shadow:0 4px 20px rgba(34,197,94,.4);letter-spacing:-.1px}
+.btn-cta{display:inline-flex;align-items:center;gap:8px;background:#22c55e;color:#fff;padding:11px 26px;border-radius:10px;font-size:14px;font-weight:800;box-shadow:0 4px 20px rgba(34,197,94,.4)}
 .privacy-note{font-size:12px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:5px}
 
-/* ── RIGHT visual ── */
+/* RIGHT */
 .right{flex:1;position:relative;display:flex;align-items:center;justify-content:center}
+.right-inner{display:flex;flex-direction:column;align-items:center;gap:12px}
+.win-row{display:flex;align-items:center;gap:14px}
 
-/* Excel mini window */
-.excel-win{background:#217346;border-radius:10px;width:340px;box-shadow:0 12px 48px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1)}
-.win-header{background:#185c37;border-radius:10px 10px 0 0;padding:8px 14px;display:flex;align-items:center;gap:8px}
-.win-dots{display:flex;gap:5px}
-.wd{width:10px;height:10px;border-radius:50%}
+/* Excel window */
+.excel-win{background:#217346;border-radius:10px;width:310px;box-shadow:0 12px 48px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1)}
+.win-header{background:#185c37;border-radius:10px 10px 0 0;padding:7px 12px;display:flex;align-items:center;gap:6px}
+.win-dots{display:flex;gap:4px}
+.wd{width:9px;height:9px;border-radius:50%}
 .wr{background:#ff5f57}.wy{background:#ffbd2e}.wg{background:#28c840}
-.win-title{font-size:11px;color:rgba(255,255,255,.7);margin-left:6px}
-.excel-grid{background:#fff;border-radius:0 0 0 0}
-.grid-head{display:grid;grid-template-columns:30px repeat(3,1fr);background:#e8f5e9}
-.gcell{padding:5px 8px;font-size:11px;font-weight:700;color:#185c37;border-right:1px solid #d1fae5;border-bottom:1px solid #d1fae5;white-space:nowrap;overflow:hidden}
+.win-title{font-size:10px;color:rgba(255,255,255,.6);margin-left:4px}
+.excel-grid{background:#fff}
+.grid-head{display:grid;grid-template-columns:28px repeat(3,1fr);background:#e8f5e9}
+.gcell{padding:5px 7px;font-size:10px;font-weight:700;color:#185c37;border-right:1px solid #d1fae5;border-bottom:1px solid #d1fae5;white-space:nowrap;overflow:hidden}
 .gcell.num{color:#9ca3af;background:#f9fafb;font-weight:400;text-align:center}
-.grid-row{display:grid;grid-template-columns:30px repeat(3,1fr)}
+.grid-row{display:grid;grid-template-columns:28px repeat(3,1fr)}
 .grid-row.sel{background:#dcfce7;outline:2px dashed #22c55e;outline-offset:-1px}
-.gcell.d{padding:5px 8px;font-size:11px;color:#111;border-right:1px solid #f0fdf4;border-bottom:1px solid #f0fdf4;white-space:nowrap;overflow:hidden}
-.copy-bar{background:#185c37;border-radius:0 0 10px 10px;padding:7px 14px;font-size:11px;color:#86efac;display:flex;align-items:center;gap:6px}
+.gcell.d{padding:5px 7px;font-size:10px;color:#111;border-right:1px solid #f0fdf4;border-bottom:1px solid #f0fdf4;white-space:nowrap;overflow:hidden}
+.copy-bar{background:#185c37;border-radius:0 0 10px 10px;padding:6px 12px;font-size:10px;color:#86efac;display:flex;align-items:center;gap:5px}
+.big-arrow{font-size:36px;color:rgba(255,255,255,.3)}
 
-/* arrow */
-.big-arrow{font-size:44px;color:rgba(255,255,255,.3);margin:0 -8px;user-select:none}
-
-/* Form mini window */
-.form-win{background:#fff;border-radius:10px;width:300px;box-shadow:0 12px 48px rgba(0,0,0,.5)}
-.form-header{background:#f9fafb;border-radius:10px 10px 0 0;padding:10px 14px;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:700;color:#374151}
-.form-body{padding:16px 16px 12px}
-.frow{margin-bottom:12px}
-.flabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;margin-bottom:4px}
-.finput{width:100%;padding:7px 10px;border-radius:6px;font-size:12px;font-weight:600}
+/* Form window */
+.form-win{background:#fff;border-radius:10px;width:270px;box-shadow:0 12px 48px rgba(0,0,0,.5)}
+.form-header{background:#f9fafb;border-radius:10px 10px 0 0;padding:9px 12px;border-bottom:1px solid #e5e7eb;font-size:11px;font-weight:700;color:#374151}
+.form-body{padding:14px 14px 10px}
+.frow{margin-bottom:10px}
+.flabel{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;margin-bottom:3px}
+.finput{width:100%;padding:6px 9px;border-radius:5px;font-size:11px;font-weight:600}
 .finput.filled{border:2px solid #22c55e;background:#f0fdf4;color:#15803d}
 .finput.empty{border:1px solid #d1d5db;background:#fff;color:#d1d5db}
+.toast{background:#1d6f42;color:#fff;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;box-shadow:0 6px 20px rgba(0,0,0,.35);white-space:nowrap}
 
-/* toast overlay */
-.toast{background:#1d6f42;color:#fff;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(0,0,0,.35);margin-top:14px;align-self:center;white-space:nowrap}
-
-.right-inner{display:flex;flex-direction:column;align-items:center;gap:0}
-.win-row{display:flex;align-items:center;gap:14px}
+/* Translate tooltip */
+.tip-win{background:#fff;border-radius:10px;width:270px;box-shadow:0 12px 48px rgba(0,0,0,.5);overflow:hidden;margin-top:4px}
+.tip-header{background:#1d6f42;padding:7px 11px;display:flex;align-items:center;gap:7px}
+.tip-title{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;flex:1}
+.tip-src{font-size:9px;background:rgba(255,255,255,.2);border-radius:3px;padding:1px 6px;color:#fff}
+.tip-body{padding:8px 10px;display:flex;flex-direction:column;gap:6px}
+.tip-row{display:flex;align-items:flex-start;gap:6px}
+.tip-badge{font-size:9px;font-weight:700;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:3px;padding:1px 5px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.tip-text{font-size:10px;color:#1f2937;line-height:1.4;flex:1}
+.tip-cache{font-size:9px;color:#9ca3af;align-self:center}
+.sel-label{font-size:10px;color:rgba(255,255,255,.5);text-align:center;margin-top:2px}
+.sel-text{background:rgba(255,255,255,.12);border-radius:4px;padding:3px 10px;font-size:10px;color:rgba(255,255,255,.8);font-style:italic;text-align:center}
 </style>
 </head>
 <body>
@@ -82,124 +80,104 @@ body{width:1400px;height:560px;overflow:hidden;font-family:system-ui,-apple-syst
 <div class="blob3"></div>
 
 <div class="layout">
-
-  <!-- LEFT: copy -->
+  <!-- LEFT -->
   <div class="left">
     <div class="logo-row">
       <div class="logo-box">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
           <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
           <rect x="8" y="2" width="8" height="4" rx="1"/>
         </svg>
       </div>
       <div>
         <div class="product-name">Excel Paste Filler</div>
-        <div class="product-ver">v2.1.0 · Free · No sign-in required</div>
+        <div class="product-ver">v2.1.1 · Free · No sign-in required</div>
       </div>
     </div>
-
-    <div class="headline">Paste Excel cells<br>into any <span>web form</span></div>
-    <div class="sub">Copy a row in Excel, click any form field, press Ctrl+V — all adjacent fields fill instantly. Works with React, Vue, Angular, and plain HTML.</div>
-
+    <div class="headline">Paste Excel data.<br><span>Translate anything.</span></div>
+    <div class="sub">Copy Excel cells into any web form with one keystroke. Highlight any text to instantly translate into Indonesian, Vietnamese, Chinese or English.</div>
     <div class="pills">
-      <div class="pill"><span class="pill-icon">⚡</span>One-keystroke fill</div>
-      <div class="pill"><span class="pill-icon">📊</span>Multi-row support</div>
-      <div class="pill"><span class="pill-icon">🖱️</span>Right-click table copy</div>
-      <div class="pill"><span class="pill-icon">🔒</span>100% local · no data sent</div>
+      <div class="pill">⚡ One-keystroke paste fill</div>
+      <div class="pill">📋 Multi-row bulk paste</div>
+      <div class="pill">🌐 Select-to-translate</div>
+      <div class="pill">🔤 4 languages · auto-detect</div>
+      <div class="pill">🔒 100% local · no data sent</div>
     </div>
-
     <div class="cta-row">
       <div class="btn-cta">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
         Add to Chrome — Free
       </div>
       <div class="privacy-note">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         No account · No tracking
       </div>
     </div>
   </div>
 
-  <!-- RIGHT: visual demo -->
+  <!-- RIGHT -->
   <div class="right">
     <div class="right-inner">
+      <!-- Paste Fill demo -->
       <div class="win-row">
-        <!-- Excel window -->
         <div class="excel-win">
           <div class="win-header">
             <div class="win-dots"><div class="wd wr"></div><div class="wd wy"></div><div class="wd wg"></div></div>
-            <div class="win-title">CustomerList.xlsx — Excel</div>
+            <div class="win-title">CustomerList.xlsx</div>
           </div>
           <div class="excel-grid">
             <div class="grid-head">
-              <div class="gcell num"></div>
-              <div class="gcell">Name</div>
-              <div class="gcell">Company</div>
-              <div class="gcell">Email</div>
+              <div class="gcell num"></div><div class="gcell">Name</div><div class="gcell">Company</div><div class="gcell">Email</div>
             </div>
             <div class="grid-row" style="background:#f9fafb">
-              <div class="gcell num d">1</div>
-              <div class="gcell d" style="color:#6b7280;font-style:italic">CustomerName</div>
-              <div class="gcell d" style="color:#6b7280;font-style:italic">Company</div>
-              <div class="gcell d" style="color:#6b7280;font-style:italic">Email</div>
+              <div class="gcell num d">1</div><div class="gcell d" style="color:#9ca3af">Name</div><div class="gcell d" style="color:#9ca3af">Company</div><div class="gcell d" style="color:#9ca3af">Email</div>
             </div>
             <div class="grid-row sel">
-              <div class="gcell num d">2</div>
-              <div class="gcell d">Alice Johnson</div>
-              <div class="gcell d">Acme Corp</div>
-              <div class="gcell d">alice@acme.com</div>
+              <div class="gcell num d">2</div><div class="gcell d">Alice Johnson</div><div class="gcell d">Acme Corp</div><div class="gcell d">alice@acme.com</div>
             </div>
             <div class="grid-row">
-              <div class="gcell num d">3</div>
-              <div class="gcell d">Bob Smith</div>
-              <div class="gcell d">Globex Ltd</div>
-              <div class="gcell d">bob@globex.com</div>
-            </div>
-            <div class="grid-row">
-              <div class="gcell num d">4</div>
-              <div class="gcell d">Carol Tan</div>
-              <div class="gcell d">TechStart</div>
-              <div class="gcell d">carol@ts.sg</div>
+              <div class="gcell num d">3</div><div class="gcell d">Bob Smith</div><div class="gcell d">Globex Ltd</div><div class="gcell d">bob@globex.com</div>
             </div>
           </div>
-          <div class="copy-bar">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Row 2 copied · Ctrl+C
-          </div>
+          <div class="copy-bar"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Row 2 copied · Ctrl+C</div>
         </div>
-
         <div class="big-arrow">→</div>
-
-        <!-- Form window -->
         <div class="form-win">
-          <div class="form-header">🔒 crm.company.com — New Contact</div>
+          <div class="form-header">&#128274; crm.company.com</div>
           <div class="form-body">
-            <div class="frow">
-              <div class="flabel">Customer Name</div>
-              <input class="finput filled" value="Alice Johnson" readonly>
-            </div>
-            <div class="frow">
-              <div class="flabel">Company</div>
-              <input class="finput filled" value="Acme Corp" readonly>
-            </div>
-            <div class="frow">
-              <div class="flabel">Email Address</div>
-              <input class="finput filled" value="alice@acme.com" readonly>
-            </div>
-            <div class="frow" style="margin-bottom:0">
-              <div class="flabel">Phone Number</div>
-              <input class="finput empty" placeholder="+1 555 000 0000" readonly>
-            </div>
+            <div class="frow"><div class="flabel">Customer Name</div><input class="finput filled" value="Alice Johnson" readonly></div>
+            <div class="frow"><div class="flabel">Company</div><input class="finput filled" value="Acme Corp" readonly></div>
+            <div class="frow" style="margin-bottom:0"><div class="flabel">Email Address</div><input class="finput filled" value="alice@acme.com" readonly></div>
           </div>
         </div>
       </div>
 
       <div class="toast">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        ✓ Filled 3 fields — Ctrl+V
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        &#10003; Filled 3 fields automatically · Ctrl+V
       </div>
+
+      <!-- Translate tooltip demo -->
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-top:4px">
+        <div>
+          <div class="sel-label">Selected text</div>
+          <div class="sel-text">"Supply chain disruptions impact global trade"</div>
+        </div>
+        <div class="big-arrow" style="font-size:24px;margin-top:10px">→</div>
+        <div class="tip-win">
+          <div class="tip-header">
+            <span class="tip-title">Translate</span>
+            <span class="tip-src">English</span>
+          </div>
+          <div class="tip-body">
+            <div class="tip-row"><span class="tip-badge">ID</span><span class="tip-text">Gangguan rantai pasokan berdampak pada perdagangan global</span><span class="tip-cache">&#9889;</span></div>
+            <div class="tip-row"><span class="tip-badge">VI</span><span class="tip-text">Gián đoạn chuỗi cung ứng ảnh hưởng đến thương mại toàn cầu</span></div>
+            <div class="tip-row"><span class="tip-badge">ZH</span><span class="tip-text">供应链中断影响全球贸易</span></div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
-
 </div>
 </body></html>
