@@ -1,0 +1,183 @@
+Excel Paste Filler — Chrome Extension Promo Video Script
+==========================================================
+Duration: ~75 seconds
+Format: Screen recording with voiceover
+Resolution: 1920x1080 recommended
+
+==========================================================
+SCENE 1 — OPENING TITLE (0:00 – 0:04)
+==========================================================
+SCREEN:
+  Dark green background with extension icon centred.
+  Text fades in: "Excel Paste Filler"
+  Subtitle: "Work faster. Understand more."
+
+VOICEOVER:
+  "Introducing Excel Paste Filler — the Chrome extension
+   built for people who work with data every day."
+
+==========================================================
+SCENE 2 — THE PROBLEM (0:04 – 0:10)
+==========================================================
+SCREEN:
+  Show an Excel spreadsheet with customer data on the left.
+  Show a web form on the right.
+  Slowly click each field one by one, typing manually —
+  show the tedious repetition.
+
+VOICEOVER:
+  "Copying data from Excel into web forms, field by field —
+   it's slow, it's repetitive, and it wastes time."
+
+==========================================================
+SCENE 3 — PASTE FILL DEMO (0:10 – 0:28)
+==========================================================
+SCREEN:
+  1. Open Excel spreadsheet with customer rows
+  2. Select a row of cells — press Ctrl+C
+  3. Switch to browser tab with a web form (CRM or order form)
+  4. Click the first field
+  5. Press Ctrl+V
+  6. Show all fields filling instantly with green highlight flash
+  7. Show the green toast: "✓ Filled 4 fields automatically"
+
+VOICEOVER:
+  "With Excel Paste Filler, just copy your row in Excel,
+   click the first field on any web form,
+   and press Ctrl+V.
+   All adjacent fields fill instantly — automatically.
+   No more clicking. No more typing. Done in one keystroke."
+
+==========================================================
+SCENE 4 — MULTI-ROW DEMO (0:28 – 0:36)
+==========================================================
+SCREEN:
+  1. Select multiple rows in Excel — Ctrl+C
+  2. Switch to browser with a data table
+  3. Press Ctrl+V
+  4. Show multiple rows filling at once
+  5. Show toast: "✓ Filled 4 rows · 16 fields"
+
+VOICEOVER:
+  "Need to fill multiple rows at once?
+   Select them all in Excel and paste —
+   the extension handles every row automatically."
+
+==========================================================
+SCENE 5 — SELECT TO TRANSLATE DEMO (0:36 – 0:55)
+==========================================================
+SCREEN:
+  1. Open any English web page (news article or product page)
+  2. Slowly highlight a sentence with the mouse
+  3. Show the translation tooltip appearing smoothly
+  4. Zoom in on the tooltip showing ID, VI, ZH rows
+  5. Show the ⚡ cache icon on one row
+  6. Highlight a different sentence — tooltip updates instantly
+  7. Show the retry button on a failed row
+  8. Open a Chinese page — highlight Chinese text
+  9. Show the tooltip detecting "中文" as source and
+     translating to EN, ID, VI
+
+VOICEOVER:
+  "Excel Paste Filler also includes a built-in
+   select-to-translate feature.
+   Simply highlight any text on any web page —
+   and an instant translation tooltip appears.
+   Supports English, Chinese, Vietnamese and Indonesian.
+   The extension auto-detects the source language
+   and translates into all your chosen languages at once.
+   Translations are cached locally for instant results
+   on repeated selections."
+
+==========================================================
+SCENE 6 — SETTINGS PAGE (0:55 – 1:05)
+==========================================================
+SCREEN:
+  1. Click extension icon → Settings & Options
+  2. Show the Settings page
+  3. Highlight language toggle checkboxes (EN/ID/VI/ZH)
+  4. Click the TOP and LEFT anchor buttons — show dot moving
+  5. Drag the opacity slider — show live preview tooltip flash
+  6. Show the cache entry count and Clear Cache button
+
+VOICEOVER:
+  "Customise everything in the Settings page.
+   Choose which languages appear in your tooltip.
+   Pin the tooltip to any corner of the screen,
+   or let it follow your selection automatically.
+   Adjust transparency — and see a live preview
+   right on the settings page."
+
+==========================================================
+SCENE 7 — PRIVACY & CLOSING (1:05 – 1:15)
+==========================================================
+SCREEN:
+  Dark green background.
+  Icons appear one by one with text:
+    🔒  "100% Local — no data collected"
+    ⚡  "No account required"
+    🌐  "Works on all websites"
+    🆓  "Completely free"
+  Extension icon + name fade in at centre.
+  Text: "Add to Chrome — Free"
+
+VOICEOVER:
+  "Excel Paste Filler is completely free.
+   No account. No tracking. No data sent to our servers.
+   Works on every website.
+   Add it to Chrome today and start saving time."
+
+==========================================================
+END CARD (1:15 – 1:20)
+==========================================================
+SCREEN:
+  Chrome Web Store badge or link.
+  GitHub link: github.com/wklam128/excel-paste-filler
+  Soft fade to black.
+
+==========================================================
+RECORDING TIPS
+==========================================================
+- Use Windows Game Bar (Win + G) or OBS Studio to record
+- Set browser zoom to 100% before recording
+- Record at 1920x1080 for best quality
+- Use a quiet room if recording voiceover with microphone
+- Alternatively use free text-to-speech tools:
+    - ElevenLabs (elevenlabs.io) — very natural voice
+    - Microsoft Azure TTS — free tier available
+    - Murf.ai — good for professional voiceover
+- Recommended video editor: DaVinci Resolve (free)
+- Export as MP4, 1080p, H.264
+- Upload to YouTube as Public or Unlisted
+- Paste the YouTube URL into Chrome Web Store listing
+
+==========================================================
+YOUTUBE VIDEO DETAILS
+==========================================================
+
+Title:
+Excel Paste Filler — Paste Excel Data into Any Web Form + Translate Any Text Instantly
+
+Description:
+Excel Paste Filler is a free Chrome extension that saves time for anyone who copies data from Excel into web forms daily.
+
+FEATURES:
+✅ Paste Excel cells into any web form with Ctrl+V
+✅ Multi-row bulk paste support
+✅ Auto-fill adjacent fields in sequence
+✅ Select any text to translate instantly (EN / ID / VI / ZH)
+✅ Auto-detects source language
+✅ Translation cache for instant repeat results
+✅ Pin tooltip position or follow selection
+✅ 100% local — no data collected, no account needed
+
+🔗 Install free on Chrome Web Store:
+[paste your Web Store link here]
+
+📂 Open source on GitHub:
+https://github.com/wklam128/excel-paste-filler
+
+Tags:
+excel, chrome extension, paste fill, web form, autofill,
+translate, translation tooltip, productivity, data entry,
+Indonesian, Vietnamese, Chinese, no account, free
