@@ -5,7 +5,6 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-system,sans-serif;background:#f8fafc;display:flex;flex-direction:column}
-
 .browser-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
 .browser-dots{display:flex;gap:6px}
 .dot{width:13px;height:13px;border-radius:50%}
@@ -13,9 +12,7 @@ body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-syst
 .browser-url{flex:1;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:20px;padding:5px 14px;font-size:13px;color:#374151;max-width:600px;margin:0 auto}
 .ext-area{display:flex;align-items:center;gap:6px;margin-left:auto}
 .ext-icon{width:30px;height:30px;background:#1d6f42;border-radius:6px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #1d6f42,0 0 0 4px rgba(29,111,66,.25)}
-
-/* page behind popup */
-.page-bg{flex:1;padding:36px 60px;position:relative;overflow:hidden;filter:blur(1px);opacity:.6}
+.page-bg{flex:1;padding:36px 60px;position:relative;overflow:hidden;filter:blur(1px);opacity:.5}
 .page-title{font-size:20px;font-weight:700;color:#111827;margin-bottom:4px}
 .page-sub{font-size:13px;color:#6b7280;margin-bottom:24px}
 .form-card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.08);padding:28px 32px;max-width:640px}
@@ -24,74 +21,51 @@ body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-syst
 .form-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280}
 .form-input{padding:9px 13px;border:1px solid #d1d5db;border-radius:7px;font-size:14px;color:#9ca3af;background:#fff}
 
-/* Popup window */
-.popup-wrap{
-  position:absolute;
-  top:50px;right:180px;
-  width:340px;
-  background:#fff;
-  border-radius:12px;
-  box-shadow:0 8px 40px rgba(0,0,0,.22);
-  overflow:hidden;
-  z-index:100;
-}
-.popup-header{background:#1d6f42;padding:16px 20px;display:flex;align-items:center;gap:12px}
-.popup-icon{width:38px;height:38px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center}
+/* Popup */
+.popup-wrap{position:absolute;top:48px;right:140px;width:320px;background:#fff;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.22);overflow:hidden;z-index:100}
+.popup-header{background:#1d6f42;padding:14px 18px;display:flex;align-items:center;gap:12px}
+.popup-icon{width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center}
 .popup-title{color:#fff;font-size:15px;font-weight:700}
-.popup-subtitle{color:rgba(255,255,255,.75);font-size:12px;margin-top:2px}
+.popup-subtitle{color:rgba(255,255,255,.75);font-size:11px;margin-top:2px}
+.popup-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 
-.popup-body{padding:18px 20px}
-.status-card{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
-.status-dot{width:10px;height:10px;border-radius:50%;background:#22c55e;flex-shrink:0}
-.status-text{font-size:13px;color:#15803d;font-weight:600}
-.status-count{font-size:22px;font-weight:800;color:#1d6f42;margin-left:auto}
+.status-card{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:9px 13px;display:flex;align-items:center;justify-content:space-between}
+.status-label{font-size:12px;color:#6b7280;display:flex;align-items:center;gap:5px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block}
+.status-value{font:700 13px system-ui;color:#1d6f42}
+.provider-val{font-size:11px;font-weight:600;color:#1d6f42;display:flex;align-items:center;gap:4px}
 
-.info-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f3f4f6;font-size:13px}
-.info-row:last-child{border-bottom:none}
-.info-label{color:#6b7280}
-.info-value{color:#111;font-weight:600}
-.badge-on{background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
-.badge-off{background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+/* History */
+.history-card{border:1px solid #e5e7eb;border-radius:8px;overflow:hidden}
+.history-header{background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:6px 12px;display:flex;align-items:center;justify-content:space-between}
+.history-title{font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em}
+.history-clear{font-size:10px;color:#9ca3af;background:none;border:none;cursor:pointer;text-decoration:underline}
+.history-item{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #f3f4f6;font-size:11px}
+.history-item:last-child{border-bottom:none}
+.history-icon{width:22px;height:22px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px}
+.history-info{flex:1;min-width:0}
+.history-host{font-weight:600;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-detail{color:#6b7280;font-size:10px}
+.history-time{color:#9ca3af;font-size:10px;flex-shrink:0}
 
-.popup-footer{padding:14px 20px;border-top:1px solid #f3f4f6;display:flex;gap:8px}
-.btn-settings{flex:1;padding:8px;border-radius:7px;border:1px solid #e5e7eb;background:#f9fafb;color:#374151;font-size:13px;font-weight:600;cursor:pointer;text-align:center}
-.btn-help{padding:8px 14px;border-radius:7px;border:1px solid #e5e7eb;background:#f9fafb;color:#374151;font-size:13px;font-weight:600;cursor:pointer}
+.popup-footer{padding:10px 16px;border-top:1px solid #f3f4f6;text-align:center}
+.btn-settings{display:block;width:100%;padding:8px;border-radius:7px;border:1px solid #e5e7eb;background:#f9fafb;color:#374151;font-size:13px;font-weight:600;cursor:pointer;text-align:center}
 
-/* connector arrow */
-.arrow-line{
-  position:absolute;
-  top:50px;right:210px;
-  width:2px;height:40px;
-  background:#1d6f42;
-  z-index:99;
-}
-.arrow-line::after{
-  content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
-  border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #1d6f42;
-}
+.arrow-line{position:absolute;top:48px;right:170px;width:2px;height:36px;background:#1d6f42;z-index:99}
+.arrow-line::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #1d6f42}
 </style>
 </head>
 <body>
-
 <div class="browser-bar">
-  <div class="browser-dots">
-    <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
-  </div>
-  <div class="browser-url">🔒 https://crm.company.com/contacts/edit/4821</div>
+  <div class="browser-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+  <div class="browser-url">&#128274; https://crm.company.com/contacts/edit/4821</div>
   <div class="ext-area">
-    <div class="ext-icon">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
-        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-        <rect x="8" y="2" width="8" height="4" rx="1"/>
-      </svg>
-    </div>
+    <div class="ext-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div>
   </div>
 </div>
-
-<!-- Background page (blurred) -->
 <div class="page-bg">
   <div class="page-title">Edit Contact</div>
-  <div class="page-sub">Contact ID #4821 — Update details below</div>
+  <div class="page-sub">Contact ID #4821</div>
   <div class="form-card">
     <div class="form-row">
       <div class="form-group"><span class="form-label">First Name</span><input class="form-input" placeholder="First name" readonly></div>
@@ -101,63 +75,50 @@ body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-syst
       <div class="form-group"><span class="form-label">Email</span><input class="form-input" placeholder="email@company.com" readonly></div>
       <div class="form-group"><span class="form-label">Phone</span><input class="form-input" placeholder="+1 555 000 0000" readonly></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><span class="form-label">Department</span><input class="form-input" placeholder="Select…" readonly></div>
-      <div class="form-group"><span class="form-label">Location</span><input class="form-input" placeholder="City, Country" readonly></div>
-    </div>
   </div>
 </div>
-
-<!-- Arrow connector -->
 <div class="arrow-line"></div>
-
-<!-- Popup -->
 <div class="popup-wrap">
   <div class="popup-header">
-    <div class="popup-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
-        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-        <rect x="8" y="2" width="8" height="4" rx="1"/>
-      </svg>
-    </div>
-    <div>
-      <div class="popup-title">Excel Paste Filler</div>
-      <div class="popup-subtitle">Active on this page</div>
-    </div>
+    <div class="popup-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div>
+    <div><div class="popup-title">Excel Paste Filler</div><div class="popup-subtitle">Copy from Excel, paste into any field</div></div>
   </div>
-
   <div class="popup-body">
     <div class="status-card">
-      <div class="status-dot"></div>
-      <div>
-        <div class="status-text">Fillable fields detected</div>
-        <div style="font-size:12px;color:#16a34a;margin-top:2px">Ready to receive Excel paste</div>
+      <span class="status-label"><span class="status-dot"></span>Active on this page</span>
+      <span class="status-value">6 fields</span>
+    </div>
+    <div class="status-card">
+      <span class="status-label">Translation provider</span>
+      <span class="provider-val">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-2"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
+        Google Translate
+      </span>
+    </div>
+    <div class="history-card">
+      <div class="history-header">
+        <span class="history-title">Recent Pastes</span>
+        <button class="history-clear">clear</button>
       </div>
-      <div class="status-count">6</div>
-    </div>
-
-    <div class="info-row">
-      <span class="info-label">Auto-fill on paste</span>
-      <span class="badge-on">ON</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Highlight filled fields</span>
-      <span class="badge-on">ON</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Show toast notifications</span>
-      <span class="badge-on">ON</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Skip empty cells</span>
-      <span class="badge-off">OFF</span>
+      <div class="history-item">
+        <div class="history-icon">&#8862;</div>
+        <div class="history-info"><div class="history-host">crm.company.com</div><div class="history-detail">Table mode &middot; 4 fields filled</div></div>
+        <div class="history-time">2m ago</div>
+      </div>
+      <div class="history-item">
+        <div class="history-icon">&#8801;</div>
+        <div class="history-info"><div class="history-host">erp.company.com</div><div class="history-detail">Form mode &middot; 6 fields filled</div></div>
+        <div class="history-time">18m ago</div>
+      </div>
+      <div class="history-item">
+        <div class="history-icon">&#8862;</div>
+        <div class="history-info"><div class="history-host">app.hrportal.com</div><div class="history-detail">Table mode &middot; 8 fields filled</div></div>
+        <div class="history-time">1h ago</div>
+      </div>
     </div>
   </div>
-
   <div class="popup-footer">
-    <div class="btn-settings">⚙ Settings</div>
-    <div class="btn-help">?</div>
+    <div class="btn-settings">&#9881; Settings &amp; Options</div>
   </div>
 </div>
-
 </body></html>

@@ -4,195 +4,95 @@
 <meta charset="UTF-8">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-system,sans-serif;background:#f8fafc;display:flex;flex-direction:column}
-
+body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-system,sans-serif;background:#f3f4f6;display:flex;flex-direction:column}
 .browser-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
 .browser-dots{display:flex;gap:6px}
 .dot{width:13px;height:13px;border-radius:50%}
 .dot-r{background:#ff5f57}.dot-y{background:#ffbd2e}.dot-g{background:#28c840}
 .browser-url{flex:1;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:20px;padding:5px 14px;font-size:13px;color:#374151;max-width:640px;margin:0 auto}
-
-.page{flex:1;display:flex;gap:0;overflow:hidden}
-
-/* Left: data entry table */
-.left-pane{flex:1;padding:36px 48px;overflow:hidden}
-.page-title{font-size:20px;font-weight:700;color:#111827;margin-bottom:4px}
+.ext-icon{width:30px;height:30px;background:#1d6f42;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-left:auto}
+.page{flex:1;display:flex;overflow:hidden}
+.form-wrap{flex:1;padding:36px 50px;overflow:hidden}
+.page-title{font-size:22px;font-weight:700;color:#111827;margin-bottom:6px}
 .page-sub{font-size:13px;color:#6b7280;margin-bottom:20px}
-
 .annotation{display:flex;align-items:center;gap:10px;margin-bottom:18px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px}
 .ann-text{font-size:13px;color:#92400e;font-weight:600}
 kbd{background:#f3f4f6;border:1px solid #d1d5db;border-bottom:2px solid #d1d5db;border-radius:4px;padding:2px 7px;font:12px monospace;color:#374151}
-
-.data-table-wrap{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.08);overflow:hidden}
-.table-toolbar{padding:12px 20px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between}
-.table-toolbar-title{font-size:14px;font-weight:700;color:#111}
-.tb-btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid #e5e7eb;background:#f9fafb;color:#374151}
-.tb-btn-primary{background:#1d6f42;color:#fff;border-color:#1d6f42}
-
+.table-wrap{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.08);overflow:hidden}
+.table-title{font-size:14px;font-weight:700;color:#111;padding:16px 20px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between}
+.badge{font-size:11px;background:#dcfce7;color:#16a34a;border-radius:10px;padding:2px 10px;font-weight:700}
 table{width:100%;border-collapse:collapse}
-thead{background:#f9fafb}
-th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb}
-td{padding:10px 14px;font-size:13px;color:#374151;border-bottom:1px solid #f3f4f6}
-tr.filled td{background:#f0fdf4}
-tr.filled td input{border:2px solid #22c55e;background:#f0fdf4;color:#15803d;font-weight:600;border-radius:5px;padding:5px 8px;width:100%;font-size:13px}
-tr.empty td input{border:1px solid #d1d5db;background:#fff;color:#9ca3af;border-radius:5px;padding:5px 8px;width:100%;font-size:13px}
-.row-num{color:#9ca3af;font-size:12px;text-align:center;font-weight:700}
-
-/* Right Excel panel */
-.excel-panel{width:310px;background:#217346;display:flex;flex-direction:column;flex-shrink:0}
+th{background:#f9fafb;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#6b7280;padding:10px 16px;border-bottom:1px solid #e5e7eb;text-align:left}
+td{padding:10px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#111}
+tr.filled td{background:#f0fdf4;color:#15803d;font-weight:600}
+tr.filled td:first-child{border-left:3px solid #22c55e}
+tr.empty td{color:#9ca3af}
+.excel-panel{width:340px;background:#217346;display:flex;flex-direction:column;flex-shrink:0}
 .excel-header{background:#185c37;padding:10px 16px;display:flex;align-items:center;gap:8px}
 .excel-logo{font-size:15px;font-weight:800;color:#fff}
-.excel-title{font-size:12px;color:rgba(255,255,255,.8)}
 .excel-ribbon{background:#217346;padding:6px 10px;border-bottom:1px solid #1a5e38;display:flex;gap:6px}
 .rb-btn{background:rgba(255,255,255,.15);border:none;border-radius:4px;padding:4px 10px;font-size:11px;color:#fff}
 .excel-grid{flex:1;background:#fff;overflow:hidden}
-.excel-cols{display:grid;grid-template-columns:32px repeat(3,1fr);background:#f2f2f2;border-bottom:1px solid #d1d5db}
-.ecol{padding:4px 6px;font-size:11px;font-weight:700;color:#595959;border-right:1px solid #d1d5db;text-align:center}
-.excel-row{display:grid;grid-template-columns:32px repeat(3,1fr);border-bottom:1px solid #e5e7eb}
+.excel-cols{display:grid;grid-template-columns:36px repeat(3,1fr);background:#f2f2f2;border-bottom:1px solid #d1d5db}
+.ecol{padding:4px 8px;font-size:11px;font-weight:700;color:#595959;border-right:1px solid #d1d5db;text-align:center}
+.excel-row{display:grid;grid-template-columns:36px repeat(3,1fr);border-bottom:1px solid #e5e7eb}
 .excel-row.copied{background:#e8f5e9;outline:2px dashed #22c55e;outline-offset:-1px}
-.ecell{padding:5px 8px;font-size:12px;border-right:1px solid #e5e7eb;color:#111;overflow:hidden;white-space:nowrap}
-.ecell.num{color:#595959;background:#f9f9f9;text-align:center;font-weight:600;font-size:11px}
-.ecell.hdr{font-weight:700;color:#185c37;background:#e8f5e9;font-size:11px}
+.ecell{padding:5px 8px;font-size:12px;border-right:1px solid #e5e7eb;color:#111;white-space:nowrap;overflow:hidden}
+.ecell.num{color:#595959;background:#f9f9f9;text-align:center;font-weight:600}
+.ecell.hdr{font-weight:700;color:#185c37;background:#e8f5e9}
 .copy-indicator{background:#185c37;border:1px solid #22c55e;border-radius:6px;margin:8px;padding:8px 12px;font-size:11px;color:#86efac;display:flex;align-items:center;gap:6px}
-
-/* toast */
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1d6f42;color:#fff;padding:10px 24px;border-radius:10px;font:700 14px system-ui;box-shadow:0 6px 20px rgba(0,0,0,.2);white-space:nowrap;z-index:9999}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1d6f42;color:#fff;padding:10px 24px;border-radius:10px;font:700 14px system-ui;box-shadow:0 6px 20px rgba(0,0,0,.2);white-space:nowrap}
 </style>
 </head>
 <body>
-
 <div class="browser-bar">
-  <div class="browser-dots">
-    <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
-  </div>
-  <div class="browser-url">🔒 https://erp.company.com/procurement/purchase-orders/new</div>
+  <div class="browser-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+  <div class="browser-url">&#128274; https://erp.company.com/inventory/bulk-update</div>
+  <div class="ext-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div>
 </div>
-
 <div class="page">
-
-  <div class="left-pane">
-    <div class="page-title">Bulk Purchase Order Entry</div>
-    <div class="page-sub">Paste multiple rows from Excel to fill the order table at once</div>
-
+  <div class="form-wrap">
+    <div class="page-title">Bulk Inventory Update</div>
+    <div class="page-sub">Paste multiple rows from Excel to update product records at once</div>
     <div class="annotation">
-      <span style="font-size:18px">📋</span>
-      <span class="ann-text">Copied 3 rows × 3 columns from Excel → clicked first cell → pressed <kbd>Ctrl+V</kbd> — all 9 cells filled instantly</span>
+      <span style="font-size:18px">&#128203;</span>
+      <span class="ann-text">Selected 4 rows in Excel &rarr; Ctrl+C &rarr; clicked first cell &rarr; Ctrl+V &mdash; all rows filled instantly</span>
     </div>
-
-    <div class="data-table-wrap">
-      <div class="table-toolbar">
-        <span class="table-toolbar-title">Order Line Items</span>
-        <div style="display:flex;gap:8px">
-          <button class="tb-btn">Add Row</button>
-          <button class="tb-btn tb-btn-primary">Submit Order</button>
-        </div>
-      </div>
+    <div class="table-wrap">
+      <div class="table-title"><span>Product Records</span><span class="badge">&#10003; 4 rows filled</span></div>
       <table>
-        <thead>
-          <tr>
-            <th style="width:40px">#</th>
-            <th>Product Code</th>
-            <th>Description</th>
-            <th>Qty</th>
-          </tr>
-        </thead>
+        <thead><tr><th>SKU</th><th>Product Name</th><th>Stock Qty</th><th>Unit Price</th><th>Status</th></tr></thead>
         <tbody>
-          <tr class="filled">
-            <td class="row-num">1</td>
-            <td><input value="SKU-10042" readonly></td>
-            <td><input value="Wireless Keyboard Pro" readonly></td>
-            <td><input value="50" readonly></td>
-          </tr>
-          <tr class="filled">
-            <td class="row-num">2</td>
-            <td><input value="SKU-10087" readonly></td>
-            <td><input value="USB-C Hub 7-Port" readonly></td>
-            <td><input value="25" readonly></td>
-          </tr>
-          <tr class="filled">
-            <td class="row-num">3</td>
-            <td><input value="SKU-10115" readonly></td>
-            <td><input value="Ergonomic Mouse" readonly></td>
-            <td><input value="30" readonly></td>
-          </tr>
-          <tr class="empty">
-            <td class="row-num">4</td>
-            <td><input placeholder="Enter SKU…" readonly></td>
-            <td><input placeholder="Enter description…" readonly></td>
-            <td><input placeholder="0" readonly></td>
-          </tr>
-          <tr class="empty">
-            <td class="row-num">5</td>
-            <td><input placeholder="Enter SKU…" readonly></td>
-            <td><input placeholder="Enter description…" readonly></td>
-            <td><input placeholder="0" readonly></td>
-          </tr>
+          <tr class="filled"><td>SKU-001</td><td>Wireless Mouse X200</td><td>150</td><td>$29.99</td><td>In Stock</td></tr>
+          <tr class="filled"><td>SKU-002</td><td>USB-C Hub Pro</td><td>84</td><td>$49.99</td><td>In Stock</td></tr>
+          <tr class="filled"><td>SKU-003</td><td>Mechanical Keyboard</td><td>32</td><td>$89.00</td><td>Low Stock</td></tr>
+          <tr class="filled"><td>SKU-004</td><td>HD Webcam 1080p</td><td>0</td><td>$59.99</td><td>Out of Stock</td></tr>
+          <tr class="empty"><td>SKU-005</td><td></td><td></td><td></td><td></td></tr>
+          <tr class="empty"><td>SKU-006</td><td></td><td></td><td></td><td></td></tr>
         </tbody>
       </table>
     </div>
   </div>
-
   <div class="excel-panel">
     <div class="excel-header">
       <div class="excel-logo">X</div>
-      <div>
-        <div style="color:#fff;font-weight:700;font-size:13px">Microsoft Excel</div>
-        <div class="excel-title">PurchaseOrder_Q1.xlsx</div>
-      </div>
+      <div><div style="color:#fff;font-weight:700;font-size:13px">Microsoft Excel</div><div style="font-size:12px;color:rgba(255,255,255,.8)">Inventory_April.xlsx</div></div>
     </div>
     <div class="excel-ribbon">
-      <button class="rb-btn">File</button>
-      <button class="rb-btn">Home</button>
-      <button class="rb-btn" style="background:rgba(255,255,255,.35)">Copy ✓</button>
+      <button class="rb-btn">File</button><button class="rb-btn">Home</button>
+      <button class="rb-btn" style="background:rgba(255,255,255,.35)">Copy &#10003;</button>
     </div>
     <div class="excel-grid">
-      <div class="excel-cols">
-        <div class="ecol"></div>
-        <div class="ecol">A</div>
-        <div class="ecol">B</div>
-        <div class="ecol">C</div>
-      </div>
-      <div class="excel-row">
-        <div class="ecell num">1</div>
-        <div class="ecell hdr">SKU</div>
-        <div class="ecell hdr">Description</div>
-        <div class="ecell hdr">Qty</div>
-      </div>
-      <div class="excel-row copied">
-        <div class="ecell num">2</div>
-        <div class="ecell">SKU-10042</div>
-        <div class="ecell">Wireless Keyboard Pro</div>
-        <div class="ecell">50</div>
-      </div>
-      <div class="excel-row copied">
-        <div class="ecell num">3</div>
-        <div class="ecell">SKU-10087</div>
-        <div class="ecell">USB-C Hub 7-Port</div>
-        <div class="ecell">25</div>
-      </div>
-      <div class="excel-row copied">
-        <div class="ecell num">4</div>
-        <div class="ecell">SKU-10115</div>
-        <div class="ecell">Ergonomic Mouse</div>
-        <div class="ecell">30</div>
-      </div>
-      <div class="excel-row">
-        <div class="ecell num">5</div>
-        <div class="ecell"></div><div class="ecell"></div><div class="ecell"></div>
-      </div>
-      <div class="excel-row">
-        <div class="ecell num">6</div>
-        <div class="ecell"></div><div class="ecell"></div><div class="ecell"></div>
-      </div>
+      <div class="excel-cols"><div class="ecol"></div><div class="ecol">A</div><div class="ecol">B</div><div class="ecol">C</div></div>
+      <div class="excel-row"><div class="ecell num">1</div><div class="ecell hdr">SKU</div><div class="ecell hdr">Product</div><div class="ecell hdr">Stock</div></div>
+      <div class="excel-row copied"><div class="ecell num">2</div><div class="ecell">SKU-001</div><div class="ecell">Wireless Mouse X200</div><div class="ecell">150</div></div>
+      <div class="excel-row copied"><div class="ecell num">3</div><div class="ecell">SKU-002</div><div class="ecell">USB-C Hub Pro</div><div class="ecell">84</div></div>
+      <div class="excel-row copied"><div class="ecell num">4</div><div class="ecell">SKU-003</div><div class="ecell">Mechanical Keyboard</div><div class="ecell">32</div></div>
+      <div class="excel-row copied"><div class="ecell num">5</div><div class="ecell">SKU-004</div><div class="ecell">HD Webcam 1080p</div><div class="ecell">0</div></div>
+      <div class="excel-row"><div class="ecell num">6</div><div class="ecell"></div><div class="ecell"></div><div class="ecell"></div></div>
     </div>
-    <div class="copy-indicator">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-      Rows 2–4 copied to clipboard
-    </div>
+    <div class="copy-indicator"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>4 rows copied</div>
   </div>
-
 </div>
-
-<div class="toast">✓ Filled 9 fields across 3 rows</div>
-
+<div class="toast">&#10003; Filled 4 rows &middot; 16 fields</div>
 </body></html>

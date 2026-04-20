@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-system,sans-serif;background:#f9fafb;display:flex;flex-direction:column}
+.browser-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.browser-dots{display:flex;gap:6px}
+.dot{width:13px;height:13px;border-radius:50%}
+.dot-r{background:#ff5f57}.dot-y{background:#ffbd2e}.dot-g{background:#28c840}
+.browser-url{flex:1;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:20px;padding:5px 14px;font-size:13px;color:#374151;max-width:640px;margin:0 auto}
+.ext-icon{width:30px;height:30px;background:#1d6f42;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-left:auto}
+.page{flex:1;padding:50px 120px;position:relative;overflow:hidden}
+.article-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;margin-bottom:10px}
+.article-title{font-size:28px;font-weight:800;color:#111827;margin-bottom:14px;line-height:1.3}
+.article-meta{font-size:12px;color:#9ca3af;margin-bottom:24px}
+.article-body{font-size:15px;color:#374151;line-height:1.8;max-width:700px}
+.article-body p{margin-bottom:16px}
+.selected-text{background:#b3d4fc;border-radius:2px;padding:0 1px}
+
+/* Tooltip */
+.tooltip{
+  position:absolute;
+  top:178px;left:248px;
+  width:300px;
+  background:#fff;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  box-shadow:0 12px 36px rgba(0,0,0,.18),0 2px 8px rgba(0,0,0,.1);
+  overflow:hidden;
+  z-index:100;
+}
+.tip-header{background:#1d6f42;color:#fff;padding:8px 12px;display:flex;align-items:center;gap:8px}
+.tip-title{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;flex:1}
+.tip-src{font-size:10px;background:rgba(255,255,255,.2);border-radius:4px;padding:2px 7px}
+.tip-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:16px;cursor:pointer;padding:0 2px}
+.tip-body{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.tip-row{display:flex;align-items:flex-start;gap:8px}
+.tip-badge{font-size:10px;font-weight:700;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:4px;padding:2px 6px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.tip-text{font-size:12px;color:#1f2937;line-height:1.5;flex:1}
+.tip-cache{font-size:10px;color:#9ca3af;margin-left:4px;align-self:center}
+.tip-retry{background:none;border:1px solid #d1d5db;border-radius:4px;color:#6b7280;font-size:13px;padding:1px 5px;cursor:pointer}
+
+/* Arrow from tooltip pointing down to selection */
+.tooltip::after{
+  content:'';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);
+  border:7px solid transparent;border-top-color:#fff;border-bottom:none;
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.1));
+}
+
+/* annotation badge */
+.ann-badge{
+  position:absolute;top:50px;right:120px;
+  background:#1d6f42;color:#fff;
+  border-radius:10px;padding:12px 18px;
+  font-size:13px;font-weight:600;
+  box-shadow:0 4px 16px rgba(0,0,0,.15);
+  max-width:220px;line-height:1.5;
+}
+.ann-badge::after{
+  content:'';position:absolute;bottom:-7px;left:30px;
+  border:7px solid transparent;border-top-color:#1d6f42;border-bottom:none;
+}
+</style>
+</head>
+<body>
+<div class="browser-bar">
+  <div class="browser-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+  <div class="browser-url">🔒 https://en.wikipedia.org/wiki/Supply_chain</div>
+  <div class="ext-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div>
+</div>
+
+<div class="page">
+  <div class="article-label">Encyclopedia · Supply Chain</div>
+  <div class="article-title">Global Supply Chain Management</div>
+  <div class="article-meta">Last updated: April 2026 &nbsp;·&nbsp; 12 min read</div>
+  <div class="article-body">
+    <p>A <strong>supply chain</strong> is a network of organizations, people, activities, information, and resources involved in
+    delivering a product or service to the end consumer. Effective supply chain management reduces costs and improves customer satisfaction.</p>
+    <p><span class="selected-text">Supply chain disruptions can significantly impact global trade, leading to shortages and increased prices worldwide.</span></p>
+    <p>Modern supply chains rely on real-time data analytics and automation to optimize inventory levels, forecast demand, and coordinate logistics across multiple countries and time zones.</p>
+  </div>
+
+  <!-- Tooltip -->
+  <div class="tooltip">
+    <div class="tip-header">
+      <span class="tip-title">Translate</span>
+      <span class="tip-src">English</span>
+      <button class="tip-close">&times;</button>
+    </div>
+    <div class="tip-body">
+      <div class="tip-row">
+        <span class="tip-badge">ID</span>
+        <span class="tip-text">Gangguan rantai pasokan dapat berdampak signifikan pada perdagangan global.</span>
+        <span class="tip-cache">⚡</span>
+      </div>
+      <div class="tip-row">
+        <span class="tip-badge">VI</span>
+        <span class="tip-text">Sự gián đoạn chuỗi cung ứng có thể ảnh hưởng đáng kể đến thương mại toàn cầu.</span>
+      </div>
+      <div class="tip-row">
+        <span class="tip-badge">ZH</span>
+        <span class="tip-text">供应链中断会对全球贸易产生重大影响，导致全球短缺和价格上涨。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Annotation -->
+  <div class="ann-badge">
+    ✦ Just highlight any text — translation appears instantly in your chosen languages
+  </div>
+</div>
+</body></html>
