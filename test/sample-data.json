@@ -1,0 +1,96 @@
+{
+  "_comment": "This file documents the sample Excel structure and mapping config for the test form.",
+
+  "excel_columns": [
+    "CustomerName",
+    "Company",
+    "Email",
+    "Phone",
+    "Product",
+    "Quantity",
+    "OrderDate",
+    "Country",
+    "Priority",
+    "Address",
+    "Notes",
+    "Newsletter",
+    "Terms"
+  ],
+
+  "sample_rows": [
+    {
+      "CustomerName": "Alice Johnson",
+      "Company":      "Acme Corp",
+      "Email":        "alice@acme.com",
+      "Phone":        "+1 555 123 4567",
+      "Product":      "widget-a",
+      "Quantity":     "5",
+      "OrderDate":    "2026-04-17",
+      "Country":      "US",
+      "Priority":     "high",
+      "Address":      "123 Main Street, Springfield, IL 62701",
+      "Notes":        "Rush delivery please",
+      "Newsletter":   "true",
+      "Terms":        "true"
+    },
+    {
+      "CustomerName": "Bob Smith",
+      "Company":      "Globex Ltd",
+      "Email":        "bob@globex.com",
+      "Phone":        "+44 20 7946 0000",
+      "Product":      "gadget-pro",
+      "Quantity":     "2",
+      "OrderDate":    "2026-04-18",
+      "Country":      "UK",
+      "Priority":     "normal",
+      "Address":      "10 Downing St, London, SW1A 2AA",
+      "Notes":        "",
+      "Newsletter":   "false",
+      "Terms":        "true"
+    },
+    {
+      "CustomerName": "Carol Tan",
+      "Company":      "TechStart Pte Ltd",
+      "Email":        "carol@techstart.sg",
+      "Phone":        "+65 9123 4567",
+      "Product":      "service-premium",
+      "Quantity":     "1",
+      "OrderDate":    "2026-04-20",
+      "Country":      "SG",
+      "Priority":     "urgent",
+      "Address":      "1 Raffles Place, #20-01, Singapore 048616",
+      "Notes":        "Requires invoice with GST",
+      "Newsletter":   "true",
+      "Terms":        "true"
+    }
+  ],
+
+  "example_custom_mapping": {
+    "_comment": "Save this under the origin https://yoursite.com in the Options page → Field Mappings tab.",
+    "origin": "http://localhost",
+    "mappings": {
+      "CustomerName": "#customer-name",
+      "Company":      "input[name='Company']",
+      "Email":        "input[name='Email']",
+      "Phone":        "input[name='Phone']",
+      "Product":      "select[name='Product']",
+      "Quantity":     "input[name='Quantity']",
+      "OrderDate":    "input[name='OrderDate']",
+      "Country":      "select[name='Country']",
+      "Priority":     "input[type='radio'][name='Priority']",
+      "Address":      "textarea[name='Address']",
+      "Notes":        "textarea[name='Notes']",
+      "Newsletter":   "input[type='checkbox'][name='Newsletter']",
+      "Terms":        "input[type='checkbox'][name='Terms']"
+    }
+  },
+
+  "how_to_create_excel": {
+    "step1": "Open Microsoft Excel or Google Sheets.",
+    "step2": "Create a header row with the column names listed in 'excel_columns' above.",
+    "step3": "Add data rows below the header (one order per row).",
+    "step4": "Save as .xlsx format.",
+    "step5": "Open the test form (test/sample-form.html) in Chrome with the extension loaded.",
+    "step6": "Click the green 'Import Excel' button, upload the file, and follow the panel steps."
+  }
+}

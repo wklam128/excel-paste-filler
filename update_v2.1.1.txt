@@ -1,0 +1,76 @@
+Excel Paste Filler — Version 2.1.1 Release Notes
+=================================================
+Release Date: 2026-04-20
+
+WHAT'S NEW
+----------
+
+1. Select-to-Translate Tooltip
+   Select any English, Chinese, Vietnamese, or Indonesian text on any web page
+   and a translation tooltip instantly appears with results in your chosen languages.
+   No copy-paste needed — just highlight and read.
+
+2. Auto Source Language Detection
+   The extension automatically detects whether the selected text is in English,
+   Chinese (Simplified), Vietnamese, or Indonesian and translates accordingly.
+   The tooltip header shows the detected source language.
+
+3. Four Target Languages Supported
+   Choose which languages appear in the tooltip:
+   - English (EN)
+   - Bahasa Indonesia (ID)
+   - Tiếng Việt (VI)
+   - 中文 · Chinese Simplified (ZH)
+   Each language can be toggled on or off individually in Settings.
+
+4. Per-Language Cache Indicators
+   Translations are cached locally for instant re-display.
+   A ⚡ icon on each language row indicates the result came from cache.
+   Failed languages show a ↺ retry button to re-fetch independently.
+
+5. Tooltip Position & Opacity Controls
+   Pin the tooltip to any screen edge (Top / Bottom / Left / Right) or let it
+   follow your selection automatically. Opposite edges cancel out to center.
+   A live preview flashes in the Settings page when you change the position.
+   Adjust tooltip transparency with the opacity slider (20%–100%).
+
+6. Translation Cache Management
+   Translations are stored locally for speed. View the cache entry count and
+   clear it any time from the Settings page.
+
+7. Paste History Log
+   The popup panel now shows a log of your last 10 paste operations — site,
+   fields filled, mode (table/form), and time elapsed.
+
+8. Translation Provider Shown in Popup
+   The popup panel displays the active translation provider (Google Translate)
+   so users always know which service is handling their translations.
+
+9. Powered by Google Translate
+   Switched to Google Translate API — no API key required, no daily quota,
+   suitable for global public use. Supports all listed languages with high
+   accuracy including formatting preservation (line breaks, bullet points).
+
+SETTINGS PAGE ADDITIONS
+------------------------
+- Enable/disable translation tooltip globally
+- Per-language toggles (EN, ID, VI, ZH)
+- Tooltip anchor position grid (4-direction checkboxes with live dot preview)
+- Tooltip opacity slider with live preview
+- Translation cache info + Clear Cache button
+- All translation sub-options grey out when translation is disabled
+
+BUG FIXES
+----------
+- Fixed: partial translation failure no longer cancels all other languages
+- Fixed: long text selections no longer cause translation to fail (smart truncation)
+- Fixed: tooltip correctly hidden when clicking outside or pressing Escape
+- Fixed: source language excluded from translation targets automatically
+
+TECHNICAL
+----------
+- Manifest V3 compliant
+- All translation is processed client-side via Google Translate API
+- Cache stored in chrome.storage.local (max 300 entries, auto-pruned)
+- Paste history stored in chrome.storage.local (max 50 entries)
+- No external servers, no user data collected

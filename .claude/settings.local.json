@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -)",
+      "Bash(node -e ' *)",
+      "Bash(curl -L -o xlsx.full.min.js \"https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js\")",
+      "Bash(node *)",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Read(//c/Program Files \\(x86\\)/Google/Chrome/Application/**)",
+      "Bash('C:/Program Files/Google/Chrome/Application/chrome.exe' --pack-extension=C:/Users/Administrator/Desktop/Codex/EFS_ADDON --pack-extension-key=C:/Users/Administrator/Desktop/Codex/EFS_ADDON.pem --no-message-box)",
+      "Bash(powershell -Command ' *)",
+      "Bash(powershell *)",
+      "Bash(where chrome *)",
+      "Bash(where \"C:/Program Files/Google/Chrome/Application/chrome.exe\")",
+      "Bash(ls *)",
+      "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --screenshot=C:/Users/Administrator/Desktop/Codex/EFS_ADDON/screenshots/promo_small.png --window-size=440,280 --hide-scrollbars --disable-gpu file:///C:/Users/Administrator/Desktop/Codex/EFS_ADDON/screenshots/promo_small.html)",
+      "Bash(echo \"small: $?\")",
+      "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --screenshot=C:/Users/Administrator/Desktop/Codex/EFS_ADDON/screenshots/promo_marquee.png --window-size=1400,560 --hide-scrollbars --disable-gpu file:///C:/Users/Administrator/Desktop/Codex/EFS_ADDON/screenshots/promo_marquee.html)",
+      "Bash(echo \"marquee: $?\")",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git remote *)",
+      "Bash(git branch *)",
+      "Bash(git push *)",
+      "Bash(git config *)"
+    ]
+  }
+}

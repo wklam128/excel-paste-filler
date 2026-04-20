@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Excel Paste Filler</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 300px;
+      font: 13px/1.5 system-ui, -apple-system, sans-serif;
+      color: #111827;
+      background: #fff;
+    }
+
+    .header {
+      background: #1d6f42;
+      color: #fff;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header h1 { font-size: 15px; font-weight: 700; }
+    .header p  { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+
+    .body { padding: 12px 16px; }
+
+    /* Status */
+    .status-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 9px 13px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .status-label { font-size: 12px; color: #6b7280; }
+    .status-value { font: 700 13px system-ui; color: #1d6f42; }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    /* How-to card */
+    .how-to {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 10px 13px;
+      margin-bottom: 10px;
+    }
+    .how-to h2 {
+      font-size: 11px;
+      font-weight: 700;
+      color: #166534;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 7px;
+    }
+    .steps { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .step  { display: flex; align-items: flex-start; gap: 7px; font-size: 11px; color: #374151; }
+    .step-num {
+      background: #1d6f42; color: #fff;
+      border-radius: 50%; width: 16px; height: 16px;
+      font: 700 9px system-ui;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* History */
+    .history-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .history-header {
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 6px 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .history-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .history-clear {
+      font-size: 10px;
+      color: #9ca3af;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+    }
+    .history-clear:hover { color: #ef4444; }
+
+    .history-list {
+      max-height: 140px;
+      overflow-y: auto;
+    }
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 13px;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 11px;
+    }
+    .history-item:last-child { border-bottom: none; }
+    .history-icon {
+      width: 22px; height: 22px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+    .history-info { flex: 1; min-width: 0; }
+    .history-host {
+      font-weight: 600;
+      color: #374151;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .history-detail { color: #6b7280; font-size: 10px; }
+    .history-time { color: #9ca3af; font-size: 10px; flex-shrink: 0; }
+
+    .history-empty {
+      padding: 14px 13px;
+      font-size: 11px;
+      color: #9ca3af;
+      text-align: center;
+    }
+
+    /* Options link */
+    footer {
+      padding: 0 16px 12px;
+      text-align: center;
+    }
+    footer a {
+      font-size: 11px;
+      color: #6b7280;
+      text-decoration: none;
+    }
+    footer a:hover { text-decoration: underline; color: #1d6f42; }
+
+    .provider-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: #1d6f42;
+    }
+
+    kbd {
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 1px 4px;
+      font: 10px 'Consolas', monospace;
+      color: #374151;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+       fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+  </svg>
+  <div>
+    <h1>Excel Paste Filler</h1>
+    <p>Copy from Excel, paste into any field</p>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="status-card">
+    <span class="status-label">
+      <span class="status-dot"></span>Active on this page
+    </span>
+    <span class="status-value" id="field-count">…</span>
+  </div>
+
+  <div class="status-card">
+    <span class="status-label">Translation provider</span>
+    <span class="status-value provider-badge">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-1px;margin-right:4px"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-2"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>Google Translate
+    </span>
+  </div>
+
+  <!-- Paste History -->
+  <div class="history-card">
+    <div class="history-header">
+      <span class="history-title">Recent Pastes</span>
+      <button class="history-clear" id="btn-clear-history">clear</button>
+    </div>
+    <div class="history-list" id="history-list">
+      <div class="history-empty">No paste history yet.</div>
+    </div>
+  </div>
+
+  <!-- How to use -->
+  <div class="how-to">
+    <h2>How to use</h2>
+    <ol class="steps">
+      <li class="step">
+        <span class="step-num">1</span>
+        <span>Select cells in Excel &rarr; <kbd>Ctrl+C</kbd></span>
+      </li>
+      <li class="step">
+        <span class="step-num">2</span>
+        <span>Click the <strong>first field</strong> you want to fill</span>
+      </li>
+      <li class="step">
+        <span class="step-num">3</span>
+        <span>Press <kbd>Ctrl+V</kbd> — fields fill automatically</span>
+      </li>
+    </ol>
+  </div>
+
+</div>
+
+<footer>
+  <a id="options-link" href="#">Settings &amp; Options</a>
+</footer>
+
+<script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Excel Paste Filler – Options</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="page-header">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+    </svg>
+    <div>
+      <h1>Excel Paste Filler</h1>
+      <p>Settings</p>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Behaviour -->
+    <div class="card">
+      <div class="card-title">Paste Behaviour</div>
+
+      <div class="row">
+        <div class="row-left">
+          <label for="opt-highlight">Highlight filled fields</label>
+          <span class="hint">Flash a green outline on each field as it is written.</span>
+        </div>
+        <input type="checkbox" id="opt-highlight" class="toggle">
+      </div>
+
+      <div class="row">
+        <div class="row-left">
+          <label for="opt-toast">Show confirmation toast</label>
+          <span class="hint">Display a small notice at the bottom of the page after filling.</span>
+        </div>
+        <input type="checkbox" id="opt-toast" class="toggle">
+      </div>
+
+      <div class="row">
+        <div class="row-left">
+          <label for="opt-skip-empty">Skip empty cells</label>
+          <span class="hint">
+            When a copied cell is blank, move to the next page field without
+            clearing the current one. Useful for sparse data.
+          </span>
+        </div>
+        <input type="checkbox" id="opt-skip-empty" class="toggle">
+      </div>
+
+      <div class="row">
+        <div class="row-left">
+          <label for="opt-same-type">Same field type only</label>
+          <span class="hint">
+            Only fill fields of the same type as the one you started on
+            (e.g. text inputs only, skipping selects and checkboxes).
+          </span>
+        </div>
+        <input type="checkbox" id="opt-same-type" class="toggle">
+      </div>
+    </div>
+
+    <!-- Translation -->
+    <div class="card">
+      <div class="card-title">Selection Translate</div>
+
+      <div class="row">
+        <div class="row-left">
+          <label for="opt-translate">Enable translation tooltip</label>
+          <span class="hint">
+            Select any English or Chinese text on a page to instantly see
+            translations in a tooltip.
+          </span>
+        </div>
+        <input type="checkbox" id="opt-translate" class="toggle">
+      </div>
+
+      <div id="translate-subopts">
+
+      <div class="row">
+        <div class="row-left">
+          <label>Target languages</label>
+          <span class="hint">Choose which languages appear in the tooltip.</span>
+        </div>
+        <div class="lang-checks">
+          <label class="lang-check"><input type="checkbox" id="opt-tlang-en"> English (EN)</label>
+          <label class="lang-check"><input type="checkbox" id="opt-tlang-id"> Bahasa Indonesia (ID)</label>
+          <label class="lang-check"><input type="checkbox" id="opt-tlang-vi"> Tiếng Việt (VI)</label>
+          <label class="lang-check"><input type="checkbox" id="opt-tlang-zh"> 中文 · Chinese (ZH)</label>
+        </div>
+      </div>
+
+      <div class="row row-anchor">
+        <div class="row-left">
+          <label>Tooltip position</label>
+          <span class="hint">
+            Tick edges to pin the tooltip. Opposite edges cancel out to center.
+            None ticked = auto (follows selection).
+          </span>
+          <span class="anchor-desc" id="anchor-desc">Auto (near selection)</span>
+        </div>
+        <div class="anchor-grid">
+          <div></div>
+          <label class="anchor-btn" for="opt-pos-top">
+            <input type="checkbox" id="opt-pos-top">
+            <span>TOP</span>
+          </label>
+          <div></div>
+          <label class="anchor-btn" for="opt-pos-left">
+            <input type="checkbox" id="opt-pos-left">
+            <span>LEFT</span>
+          </label>
+          <div class="anchor-dot" id="anchor-dot"></div>
+          <label class="anchor-btn" for="opt-pos-right">
+            <input type="checkbox" id="opt-pos-right">
+            <span>RIGHT</span>
+          </label>
+          <div></div>
+          <label class="anchor-btn" for="opt-pos-bottom">
+            <input type="checkbox" id="opt-pos-bottom">
+            <span>BOTTOM</span>
+          </label>
+          <div></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-left">
+          <label for="opt-tip-opacity">Tooltip opacity</label>
+          <span class="hint">Lower value = more transparent. Minimum 20%.</span>
+        </div>
+        <div class="opacity-ctrl">
+          <input type="range" id="opt-tip-opacity" min="20" max="100" step="5" class="opacity-slider">
+          <span id="opt-tip-opacity-val" class="opacity-val">100%</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-left">
+          <label>Translation cache</label>
+          <span class="hint" id="cache-info">Calculating…</span>
+        </div>
+        <button id="btn-clear-cache" class="btn btn-danger">Clear Cache</button>
+      </div>
+
+      </div><!-- #translate-subopts -->
+    </div>
+
+    <!-- Target URLs -->
+    <div class="card">
+      <div class="card-title">Active on These URLs</div>
+      <p class="card-desc">
+        One URL pattern per line. <code>*</code> matches every page.
+        Use patterns like <code>https://app.example.com/*</code> to restrict to specific sites.
+      </p>
+      <textarea id="opt-urls" class="textarea" rows="5"
+        placeholder="*&#10;https://crm.company.com/*"></textarea>
+    </div>
+
+    <div class="save-row">
+      <button id="btn-save" class="btn">Save Settings</button>
+      <span id="save-msg" class="save-msg"></span>
+    </div>
+
+  </main>
+</div>
+
+<script src="options.js"></script>
+</body>
+</html>

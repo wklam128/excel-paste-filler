@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-system,sans-serif;background:#f8fafc;display:flex;flex-direction:column}
+
+.browser-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.browser-dots{display:flex;gap:6px}
+.dot{width:13px;height:13px;border-radius:50%}
+.dot-r{background:#ff5f57}.dot-y{background:#ffbd2e}.dot-g{background:#28c840}
+.browser-url{flex:1;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:20px;padding:5px 14px;font-size:13px;color:#374151;max-width:640px;margin:0 auto}
+
+.page{flex:1;padding:36px 60px;position:relative;overflow:hidden}
+.page-title{font-size:20px;font-weight:700;color:#111827;margin-bottom:4px}
+.page-sub{font-size:13px;color:#6b7280;margin-bottom:24px}
+
+/* The data table */
+.data-table-wrap{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.08);overflow:hidden}
+.table-toolbar{padding:14px 20px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between}
+.table-toolbar-title{font-size:14px;font-weight:700;color:#111}
+.toolbar-btns{display:flex;gap:8px}
+.tb-btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid #e5e7eb;background:#f9fafb;color:#374151;cursor:pointer}
+.tb-btn-primary{background:#1d6f42;color:#fff;border-color:#1d6f42}
+
+table{width:100%;border-collapse:collapse}
+thead{background:#f9fafb}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-bottom:2px solid #e5e7eb}
+td{padding:11px 16px;font-size:13px;color:#374151;border-bottom:1px solid #f3f4f6}
+tr.hovered td{background:#fef9c3}
+tr.normal:hover td{background:#f9fafb}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600}
+.badge-green{background:#dcfce7;color:#16a34a}
+.badge-blue{background:#dbeafe;color:#1d4ed8}
+.badge-amber{background:#fef3c7;color:#d97706}
+
+/* Chrome context menu */
+.ctx-menu{
+  position:absolute;
+  top:280px;left:460px;
+  background:#fff;
+  border:1px solid rgba(0,0,0,.15);
+  border-radius:6px;
+  box-shadow:0 6px 24px rgba(0,0,0,.18);
+  width:300px;
+  padding:4px 0;
+  font-size:13px;
+  color:#202124;
+  z-index:100;
+}
+.ctx-item{padding:7px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.ctx-item:hover{background:#f1f3f4}
+.ctx-item.highlighted{background:#e8f0fe;color:#1a73e8}
+.ctx-item.highlighted .ctx-icon{color:#1a73e8}
+.ctx-sep{height:1px;background:#e5e7eb;margin:4px 0}
+.ctx-icon{font-size:16px;width:20px;text-align:center}
+.ctx-label{flex:1}
+.ctx-shortcut{font-size:11px;color:#80868b}
+
+/* right-click cursor position */
+.cursor-pos{
+  position:absolute;
+  top:274px;left:456px;
+  width:0;height:0;
+  border-left:8px solid transparent;
+  border-right:8px solid transparent;
+  border-top:16px solid #1a1a2e;
+  transform:rotate(-30deg);
+  filter:drop-shadow(1px 2px 3px rgba(0,0,0,.3));
+}
+
+/* annotation badge */
+.ann{
+  position:absolute;
+  top:230px;left:100px;
+  background:#1d6f42;
+  color:#fff;
+  border-radius:8px;
+  padding:9px 16px;
+  font-size:13px;
+  font-weight:600;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  white-space:nowrap;
+}
+.ann::after{
+  content:'';position:absolute;right:-10px;top:50%;transform:translateY(-50%);
+  border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:10px solid #1d6f42;
+}
+</style>
+</head>
+<body>
+
+<div class="browser-bar">
+  <div class="browser-dots">
+    <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+  </div>
+  <div class="browser-url">🔒 https://dashboard.company.com/reports/quarterly</div>
+</div>
+
+<div class="page">
+  <div class="page-title">Quarterly Sales Report</div>
+  <div class="page-sub">Q1 2026 — Regional Performance Overview</div>
+
+  <div class="data-table-wrap">
+    <div class="table-toolbar">
+      <span class="table-toolbar-title">Sales by Region</span>
+      <div class="toolbar-btns">
+        <button class="tb-btn">Filter</button>
+        <button class="tb-btn tb-btn-primary">Export</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Region</th><th>Sales Rep</th><th>Q1 Revenue</th><th>Target</th><th>Attainment</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="normal"><td>North America</td><td>James Wilson</td><td>$842,500</td><td>$800,000</td><td>105%</td><td><span class="badge badge-green">On Track</span></td></tr>
+        <tr class="hovered"><td>Europe</td><td>Sophie Laurent</td><td>$631,200</td><td>$700,000</td><td>90%</td><td><span class="badge badge-amber">At Risk</span></td></tr>
+        <tr class="normal"><td>Asia Pacific</td><td>David Chen</td><td>$980,000</td><td>$900,000</td><td>109%</td><td><span class="badge badge-green">On Track</span></td></tr>
+        <tr class="normal"><td>Middle East</td><td>Rania Hassan</td><td>$412,800</td><td>$450,000</td><td>92%</td><td><span class="badge badge-blue">Review</span></td></tr>
+        <tr class="normal"><td>Latin America</td><td>Carlos Mendez</td><td>$295,600</td><td>$350,000</td><td>84%</td><td><span class="badge badge-amber">At Risk</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Cursor -->
+  <div class="cursor-pos"></div>
+
+  <!-- Context menu -->
+  <div class="ctx-menu">
+    <div class="ctx-item"><span class="ctx-icon">🔍</span><span class="ctx-label">Inspect</span></div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item"><span class="ctx-icon">📋</span><span class="ctx-label">Copy</span><span class="ctx-shortcut">Ctrl+C</span></div>
+    <div class="ctx-item"><span class="ctx-icon">🔗</span><span class="ctx-label">Copy link address</span></div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item highlighted">
+      <span class="ctx-icon">📊</span>
+      <span class="ctx-label"><strong>Copy Table to Clipboard (→ Excel)</strong></span>
+    </div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item"><span class="ctx-icon">🖨️</span><span class="ctx-label">Print…</span><span class="ctx-shortcut">Ctrl+P</span></div>
+  </div>
+
+  <!-- Annotation -->
+  <div class="ann">👆 Right-click any table → instantly copy to Excel</div>
+
+</div>
+</body></html>

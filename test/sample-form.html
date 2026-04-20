@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EFF Test Form – Customer Order</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font: 14px/1.6 system-ui, sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+      overflow: hidden;
+    }
+
+    .form-header {
+      background: #1e40af;
+      color: #fff;
+      padding: 20px 28px;
+    }
+    .form-header h1 { font-size: 18px; }
+    .form-header p  { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+
+    form { padding: 28px; display: flex; flex-direction: column; gap: 18px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    label {
+      font: 600 12px system-ui;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font: 14px system-ui;
+      color: #111827;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #1e40af;
+      box-shadow: 0 0 0 3px #bfdbfe;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .checkbox-group input { width: 16px; height: 16px; accent-color: #1e40af; }
+
+    .radio-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #374151;
+    }
+    .radio-option input { accent-color: #1e40af; }
+
+    .section-title {
+      font: 700 13px system-ui;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6b7280;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .btn-submit {
+      padding: 10px 24px;
+      background: #1e40af;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font: 600 14px system-ui;
+      cursor: pointer;
+      align-self: flex-end;
+      transition: background 0.15s;
+    }
+    .btn-submit:hover { background: #1d3a9e; }
+
+    .field-hint {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="form-header">
+    <h1>Customer Order Form</h1>
+    <p>Test page for Excel Form Filler Chrome Extension</p>
+  </div>
+
+  <form id="order-form" autocomplete="off">
+
+    <div class="section-title">Customer Information</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="customer-name">Customer Name</label>
+        <input type="text" id="customer-name" name="CustomerName" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label for="company">Company</label>
+        <input type="text" id="company" name="Company" placeholder="Company name">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="Email" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="Phone" placeholder="+1 555 000 0000">
+      </div>
+    </div>
+
+    <div class="section-title">Order Details</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="product">Product</label>
+        <select id="product" name="Product">
+          <option value="">Select a product…</option>
+          <option value="widget-a">Widget A</option>
+          <option value="widget-b">Widget B</option>
+          <option value="gadget-pro">Gadget Pro</option>
+          <option value="service-basic">Service Basic</option>
+          <option value="service-premium">Service Premium</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" name="Quantity" placeholder="1" min="1">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="order-date">Order Date</label>
+        <input type="date" id="order-date" name="OrderDate">
+      </div>
+      <div class="form-group">
+        <label for="country">Country</label>
+        <select id="country" name="Country">
+          <option value="">Select…</option>
+          <option value="US">United States</option>
+          <option value="UK">United Kingdom</option>
+          <option value="CA">Canada</option>
+          <option value="AU">Australia</option>
+          <option value="DE">Germany</option>
+          <option value="FR">France</option>
+          <option value="SG">Singapore</option>
+          <option value="MY">Malaysia</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Priority</label>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="Priority" value="low">
+          Low
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="Priority" value="normal" checked>
+          Normal
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="Priority" value="high">
+          High
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="Priority" value="urgent">
+          Urgent
+        </label>
+      </div>
+    </div>
+
+    <div class="section-title">Additional Details</div>
+
+    <div class="form-group">
+      <label for="address">Shipping Address</label>
+      <textarea id="address" name="Address" rows="3" placeholder="Street, City, State, ZIP"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="Notes" rows="2" placeholder="Any special instructions…"></textarea>
+    </div>
+
+    <div class="form-group">
+      <div class="checkbox-group">
+        <input type="checkbox" id="newsletter" name="Newsletter">
+        <label for="newsletter" style="text-transform:none;font-weight:400;font-size:13px;">
+          Subscribe to newsletter
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="checkbox-group">
+        <input type="checkbox" id="terms" name="Terms">
+        <label for="terms" style="text-transform:none;font-weight:400;font-size:13px;">
+          I agree to the terms and conditions
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit">Submit Order</button>
+
+  </form>
+</div>
+
+<script>
+  // Prevent actual submission during testing
+  document.getElementById('order-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('Form submission intercepted for testing. Fields have been filled by EFF.');
+  });
+
+  // Log field changes so you can verify autofill is working
+  document.querySelectorAll('input, select, textarea').forEach((el) => {
+    el.addEventListener('change', () => {
+      console.log(`[EFF-Test] ${el.name || el.id} changed to:`, el.type === 'checkbox' ? el.checked : el.value);
+    });
+  });
+</script>
+
+</body>
+</html>
