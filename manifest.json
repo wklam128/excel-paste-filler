@@ -3,7 +3,7 @@
   "name": "Excel Paste Filler",
   "short_name": "EPF",
   "version": "2.1.2",
-  "description": "Paste Excel cells into any web form and auto-fill adjacent fields in order. Select any text to instantly translate it into your chosen languages. All local.",
+  "description": "Paste Excel cells into web forms — fields auto-fill in order. Select text for instant translation into 6 languages. All local.",
   "author": "Jeff Lam",
 
   "permissions": [

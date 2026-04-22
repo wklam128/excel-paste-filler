@@ -11,38 +11,51 @@ body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-syst
 .dot-r{background:#ff5f57}.dot-y{background:#ffbd2e}.dot-g{background:#28c840}
 .browser-url{flex:1;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:20px;padding:5px 14px;font-size:13px;color:#374151;max-width:640px;margin:0 auto}
 .ext-icon{width:30px;height:30px;background:#1d6f42;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-left:auto}
-.body{flex:1;overflow:hidden;display:flex;justify-content:center;padding:0 40px 20px}
-.page{max-width:620px;width:100%;padding-top:0}
-.page-header{display:flex;align-items:center;gap:12px;background:#1d6f42;color:#fff;padding:16px 20px;margin-bottom:20px;border-radius:0 0 10px 10px}
-.page-header h1{font-size:17px;font-weight:700}
-.page-header p{font-size:11px;opacity:.8;margin-top:2px}
-.main{display:flex;flex-direction:column;gap:16px}
+.body{flex:1;overflow:hidden;display:flex;justify-content:center;padding:0 40px 16px}
+.page{max-width:640px;width:100%}
+.page-header{display:flex;align-items:center;gap:12px;background:#1d6f42;color:#fff;padding:14px 20px;margin-bottom:16px;border-radius:0 0 10px 10px}
+.page-header h1{font-size:16px;font-weight:700;flex:1}
+.page-header p{font-size:11px;opacity:.75;margin-top:1px}
+.ver-block{text-align:right;flex-shrink:0;font-size:11px;opacity:.85}
+.ver-block strong{display:block;font-size:13px}
+.main{display:flex;flex-direction:column;gap:13px}
 .card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
-.card-title{font:600 11px system-ui;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;padding:10px 16px;border-bottom:1px solid #f3f4f6;background:#f9fafb}
-.row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:11px 16px;border-bottom:1px solid #f3f4f6}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid #f3f4f6;background:#f9fafb}
+.card-header-left{display:flex;align-items:center;gap:6px}
+.card-title{font:600 11px system-ui;text-transform:uppercase;letter-spacing:.05em;color:#374151}
+.card-badge{font-size:10px;font-weight:700;border-radius:10px;padding:2px 8px;background:#dcfce7;color:#16a34a;margin-left:4px}
+.card-badge.dis{background:#f3f4f6;color:#9ca3af}
+.inline-toggle{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#374151}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 14px;border-bottom:1px solid #f3f4f6}
 .row:last-child{border-bottom:none}
 .row-left label{display:block;font-size:13px;font-weight:600;color:#374151}
-.hint{display:block;font-size:11px;color:#9ca3af;margin-top:2px}
-.toggle{width:18px;height:18px;accent-color:#1d6f42;flex-shrink:0}
-/* lang checks */
-.lang-checks{display:flex;flex-direction:column;gap:5px}
-.lang-check{display:flex;align-items:center;gap:6px;font-size:12px;color:#374151;cursor:pointer}
-.lang-check input{width:14px;height:14px;accent-color:#1d6f42}
-/* anchor grid */
-.anchor-grid{display:grid;grid-template-columns:auto auto auto;gap:5px;align-items:center;justify-items:center}
-.anchor-btn span{display:block;padding:4px 10px;border:1.5px solid #d1d5db;border-radius:6px;font:700 9px system-ui;letter-spacing:.05em;color:#6b7280;background:#f9fafb;white-space:nowrap}
-.anchor-btn.active span{background:#1d6f42;border-color:#1d6f42;color:#fff}
-.anchor-dot{width:32px;height:32px;border:1.5px dashed #d1d5db;border-radius:6px;background:#f9fafb;position:relative}
-.anchor-dot-inner{position:absolute;width:8px;height:8px;background:#1d6f42;border-radius:50%;top:50%;left:20%;transform:translate(-50%,-50%)}
-/* opacity */
-.opacity-ctrl{display:flex;align-items:center;gap:8px;min-width:160px}
+.hint{display:block;font-size:10px;color:#9ca3af;margin-top:2px}
+.toggle{width:16px;height:16px;accent-color:#1d6f42;flex-shrink:0}
+.section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9ca3af;padding:7px 14px 4px;border-top:1px solid #f3f4f6}
+/* lang cards */
+.lang-cards{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px 14px}
+.lang-card{border:1.5px solid #e5e7eb;border-radius:8px;padding:7px 5px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;position:relative;cursor:pointer}
+.lang-card.on{border-color:#22c55e;background:#f0fdf4}
+.lang-card.off{opacity:.45}
+.lang-seq{position:absolute;top:3px;left:4px;font-size:8px;font-weight:700;color:#16a34a;background:#dcfce7;border-radius:3px;padding:0 3px;line-height:14px}
+.lang-flag{font-size:18px}
+.lang-name{font-size:9px;color:#374151;font-weight:600;text-align:center}
+.lang-code{font-size:8px;color:#9ca3af}
+.lang-grip{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);font-size:8px;color:#d1d5db}
+/* sliders */
+.sliders-row{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid #f3f4f6}
+.slider-group{padding:9px 14px;border-right:1px solid #f3f4f6}
+.slider-group:last-child{border-right:none}
+.slider-label{font-size:11px;font-weight:600;color:#374151;margin-bottom:6px;display:block}
+.slider-ctrl{display:flex;align-items:center;gap:8px}
+.slider{flex:1;accent-color:#1d6f42}
+.slider-val{font-size:11px;font-weight:700;color:#1d6f42;min-width:30px}
+/* opacity ctrl */
+.opacity-ctrl{display:flex;align-items:center;gap:8px;min-width:150px}
 .opacity-slider{flex:1;accent-color:#1d6f42}
-.opacity-val{font:600 12px system-ui;color:#374151;min-width:34px;text-align:right}
-/* save */
-.save-row{display:flex;align-items:center;gap:12px;padding:4px 0}
-.btn{padding:9px 22px;background:#1d6f42;color:#fff;border:none;border-radius:7px;font:600 13px system-ui;cursor:pointer}
-.btn-danger{background:#dc2626;padding:7px 14px;font-size:12px;white-space:nowrap}
-.save-msg{font-size:12px;color:#1d6f42;font-weight:600}
+.opacity-val{font-size:11px;font-weight:700;color:#1d6f42;min-width:34px;text-align:right}
+.btn-danger{padding:6px 12px;background:#dc2626;color:#fff;border:none;border-radius:6px;font:600 11px system-ui;cursor:pointer}
+.provider-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#1d6f42;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:4px 10px}
 </style>
 </head>
 <body>
@@ -54,66 +67,64 @@ body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-syst
 <div class="body">
   <div class="page">
     <div class="page-header">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-      <div><h1>Excel Paste Filler</h1><p>Settings</p></div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+      <div style="flex:1"><h1>Excel Paste Filler</h1><p>Settings</p></div>
+      <div class="ver-block"><strong>v2.1.2</strong><span>22 April 2026</span><br><span>Jeff Lam</span></div>
     </div>
     <div class="main">
 
       <!-- Paste Behaviour -->
       <div class="card">
-        <div class="card-title">Paste Behaviour</div>
-        <div class="row"><div class="row-left"><label>Highlight filled fields</label><span class="hint">Flash a green outline on each filled field</span></div><input type="checkbox" class="toggle" checked></div>
-        <div class="row"><div class="row-left"><label>Show confirmation toast</label><span class="hint">Display a notice after filling</span></div><input type="checkbox" class="toggle" checked></div>
+        <div class="card-header"><div class="card-header-left"><div class="card-title">Paste Behaviour</div></div></div>
+        <div class="row"><div class="row-left"><label>Highlight filled fields</label><span class="hint">Flash green outline on each filled field</span></div><input type="checkbox" class="toggle" checked></div>
+        <div class="row"><div class="row-left"><label>Show confirmation toast</label><span class="hint">Display a notice at the bottom after filling</span></div><input type="checkbox" class="toggle" checked></div>
         <div class="row"><div class="row-left"><label>Skip empty cells</label><span class="hint">Move to next field without clearing</span></div><input type="checkbox" class="toggle"></div>
       </div>
 
-      <!-- Translation -->
+      <!-- Selection Translate -->
       <div class="card">
-        <div class="card-title">Selection Translate</div>
-        <div class="row"><div class="row-left"><label>Enable translation tooltip</label><span class="hint">Highlight text to see instant translations</span></div><input type="checkbox" class="toggle" checked></div>
-        <div class="row">
-          <div class="row-left"><label>Target languages</label><span class="hint">Choose which languages appear in the tooltip</span></div>
-          <div class="lang-checks">
-            <label class="lang-check"><input type="checkbox"> English (EN)</label>
-            <label class="lang-check"><input type="checkbox" checked> Bahasa Indonesia (ID)</label>
-            <label class="lang-check"><input type="checkbox" checked> Ti&#7871;ng Vi&#7879;t (VI)</label>
-            <label class="lang-check"><input type="checkbox" checked> &#20013;&#25991; &middot; Chinese (ZH)</label>
+        <div class="card-header">
+          <div class="card-header-left"><div class="card-title">Selection Translate</div><span class="card-badge">Enabled</span></div>
+          <label class="inline-toggle"><input type="checkbox" class="toggle" checked><span>Enable</span></label>
+        </div>
+        <div class="section-label">Target Languages — drag to reorder</div>
+        <div class="lang-cards">
+          <div class="lang-card on"><span class="lang-seq">1</span><span class="lang-flag">🇮🇩</span><span class="lang-name">Indonesia</span><span class="lang-code">ID</span><span class="lang-grip">⋮⋮</span></div>
+          <div class="lang-card on"><span class="lang-seq">2</span><span class="lang-flag">🇻🇳</span><span class="lang-name">Tiếng Việt</span><span class="lang-code">VI</span><span class="lang-grip">⋮⋮</span></div>
+          <div class="lang-card on"><span class="lang-seq">3</span><span class="lang-flag">🇨🇳</span><span class="lang-name">中文</span><span class="lang-code">ZH</span><span class="lang-grip">⋮⋮</span></div>
+          <div class="lang-card on"><span class="lang-seq">4</span><span class="lang-flag">🇰🇷</span><span class="lang-name">한국어</span><span class="lang-code">KO</span><span class="lang-grip">⋮⋮</span></div>
+          <div class="lang-card on"><span class="lang-seq">5</span><span class="lang-flag">🇯🇵</span><span class="lang-name">日本語</span><span class="lang-code">JA</span><span class="lang-grip">⋮⋮</span></div>
+          <div class="lang-card off"><span class="lang-flag">🇺🇸</span><span class="lang-name">English</span><span class="lang-code">EN</span><span class="lang-grip">⋮⋮</span></div>
+        </div>
+        <div class="section-label">Tooltip Appearance</div>
+        <div class="sliders-row">
+          <div class="slider-group">
+            <span class="slider-label">Font size</span>
+            <div class="slider-ctrl"><input type="range" min="11" max="16" value="13" class="slider"><span class="slider-val">13px</span></div>
+          </div>
+          <div class="slider-group">
+            <span class="slider-label">Opacity</span>
+            <div class="slider-ctrl"><input type="range" min="0" max="100" value="100" class="slider"><span class="slider-val">100%</span></div>
           </div>
         </div>
-        <div class="row" style="align-items:flex-start">
-          <div class="row-left">
-            <label>Tooltip position</label>
-            <span class="hint">Tick edges to pin. None = auto (follows selection)</span>
-            <span style="display:block;margin-top:6px;font:600 11px system-ui;color:#1d6f42">Top left</span>
-          </div>
-          <div class="anchor-grid">
-            <div></div>
-            <div class="anchor-btn active"><span>TOP</span></div>
-            <div></div>
-            <div class="anchor-btn active"><span>LEFT</span></div>
-            <div class="anchor-dot"><div class="anchor-dot-inner"></div></div>
-            <div class="anchor-btn"><span>RIGHT</span></div>
-            <div></div>
-            <div class="anchor-btn"><span>BOTTOM</span></div>
-            <div></div>
-          </div>
+        <div class="section-label">Provider &amp; Cache</div>
+        <div class="row">
+          <div class="row-left"><label>Translation provider</label></div>
+          <div class="provider-badge">🌐 Google Translate</div>
         </div>
         <div class="row">
-          <div class="row-left"><label>Tooltip opacity</label><span class="hint">Lower = more transparent. Min 20%</span></div>
-          <div class="opacity-ctrl">
-            <input type="range" min="20" max="100" value="80" class="opacity-slider" readonly>
-            <span class="opacity-val">80%</span>
-          </div>
-        </div>
-        <div class="row">
-          <div class="row-left"><label>Translation cache</label><span class="hint">24 entries stored</span></div>
-          <button class="btn btn-danger">Clear Cache</button>
+          <div class="row-left"><label>Translation cache</label><span class="hint">31 entries stored</span></div>
+          <button class="btn-danger">Clear Cache</button>
         </div>
       </div>
 
-      <div class="save-row">
-        <button class="btn">Save Settings</button>
-        <span class="save-msg">Saved!</span>
+      <!-- Copy Table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-left"><div class="card-title">Copy Table to Clipboard</div><span class="card-badge">Enabled</span></div>
+          <label class="inline-toggle"><input type="checkbox" class="toggle" checked><span>Enable</span></label>
+        </div>
+        <div class="row"><div class="row-left"><label>Copy with source formatting</label><span class="hint">Preserve colours and fonts when pasting into Excel</span></div><input type="checkbox" class="toggle"></div>
       </div>
 
     </div>

@@ -12,46 +12,47 @@ body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-syst
 .browser-url{flex:1;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:20px;padding:5px 14px;font-size:13px;color:#374151;max-width:600px;margin:0 auto}
 .ext-area{display:flex;align-items:center;gap:6px;margin-left:auto}
 .ext-icon{width:30px;height:30px;background:#1d6f42;border-radius:6px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #1d6f42,0 0 0 4px rgba(29,111,66,.25)}
-.page-bg{flex:1;padding:36px 60px;position:relative;overflow:hidden;filter:blur(1px);opacity:.5}
+.page-bg{flex:1;padding:36px 60px;position:relative;overflow:hidden;filter:blur(1px);opacity:.45}
 .page-title{font-size:20px;font-weight:700;color:#111827;margin-bottom:4px}
-.page-sub{font-size:13px;color:#6b7280;margin-bottom:24px}
-.form-card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.08);padding:28px 32px;max-width:640px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
-.form-group{display:flex;flex-direction:column;gap:6px}
+.page-sub{font-size:13px;color:#6b7280;margin-bottom:20px}
+.form-card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.08);padding:24px 28px;max-width:600px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-group{display:flex;flex-direction:column;gap:5px}
 .form-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280}
-.form-input{padding:9px 13px;border:1px solid #d1d5db;border-radius:7px;font-size:14px;color:#9ca3af;background:#fff}
+.form-input{padding:9px 12px;border:1px solid #d1d5db;border-radius:7px;font-size:13px;color:#9ca3af;background:#fff}
 
-/* Popup */
-.popup-wrap{position:absolute;top:48px;right:140px;width:320px;background:#fff;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.22);overflow:hidden;z-index:100}
-.popup-header{background:#1d6f42;padding:14px 18px;display:flex;align-items:center;gap:12px}
-.popup-icon{width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center}
-.popup-title{color:#fff;font-size:15px;font-weight:700}
-.popup-subtitle{color:rgba(255,255,255,.75);font-size:11px;margin-top:2px}
-.popup-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.popup-wrap{position:absolute;top:46px;right:130px;width:330px;background:#fff;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.22);overflow:hidden;z-index:100}
+.popup-header{background:#1d6f42;padding:13px 16px;display:flex;align-items:center;gap:10px}
+.popup-icon{width:34px;height:34px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.popup-title{color:#fff;font-size:14px;font-weight:700}
+.popup-version{color:rgba(255,255,255,.6);font-size:10px;font-weight:700;background:rgba(255,255,255,.15);border-radius:10px;padding:1px 7px;margin-left:4px;vertical-align:middle}
+.popup-subtitle{color:rgba(255,255,255,.7);font-size:11px;margin-top:2px}
+.popup-body{padding:12px 14px;display:flex;flex-direction:column;gap:9px}
 
-.status-card{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:9px 13px;display:flex;align-items:center;justify-content:space-between}
+.status-card{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between}
 .status-label{font-size:12px;color:#6b7280;display:flex;align-items:center;gap:5px}
 .status-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block}
 .status-value{font:700 13px system-ui;color:#1d6f42}
-.provider-val{font-size:11px;font-weight:600;color:#1d6f42;display:flex;align-items:center;gap:4px}
+.translate-badge{font-size:11px;font-weight:600;color:#1d6f42;display:flex;align-items:center;gap:4px}
 
-/* History */
 .history-card{border:1px solid #e5e7eb;border-radius:8px;overflow:hidden}
 .history-header{background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:6px 12px;display:flex;align-items:center;justify-content:space-between}
 .history-title{font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em}
 .history-clear{font-size:10px;color:#9ca3af;background:none;border:none;cursor:pointer;text-decoration:underline}
-.history-item{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #f3f4f6;font-size:11px}
+.history-item{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #f3f4f6;font-size:11px;cursor:pointer}
+.history-item:hover{background:#f9fafb}
 .history-item:last-child{border-bottom:none}
-.history-icon{width:22px;height:22px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px}
+.history-icon{width:24px;height:24px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#16a34a}
 .history-info{flex:1;min-width:0}
 .history-host{font-weight:600;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.history-detail{color:#6b7280;font-size:10px}
+.history-preview{color:#6b7280;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .history-time{color:#9ca3af;font-size:10px;flex-shrink:0}
+.replay-btn{font-size:9px;font-weight:700;color:#1d6f42;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:2px 6px;flex-shrink:0}
 
-.popup-footer{padding:10px 16px;border-top:1px solid #f3f4f6;text-align:center}
+.popup-footer{padding:10px 14px;border-top:1px solid #f3f4f6;text-align:center}
 .btn-settings{display:block;width:100%;padding:8px;border-radius:7px;border:1px solid #e5e7eb;background:#f9fafb;color:#374151;font-size:13px;font-weight:600;cursor:pointer;text-align:center}
 
-.arrow-line{position:absolute;top:48px;right:170px;width:2px;height:36px;background:#1d6f42;z-index:99}
+.arrow-line{position:absolute;top:46px;right:160px;width:2px;height:34px;background:#1d6f42;z-index:99}
 .arrow-line::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #1d6f42}
 </style>
 </head>
@@ -81,44 +82,62 @@ body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-syst
 <div class="popup-wrap">
   <div class="popup-header">
     <div class="popup-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div>
-    <div><div class="popup-title">Excel Paste Filler</div><div class="popup-subtitle">Copy from Excel, paste into any field</div></div>
+    <div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span class="popup-title">Excel Paste Filler</span>
+        <span class="popup-version">v2.1.2</span>
+      </div>
+      <div class="popup-subtitle">Copy from Excel · paste into any field</div>
+    </div>
   </div>
   <div class="popup-body">
     <div class="status-card">
       <span class="status-label"><span class="status-dot"></span>Active on this page</span>
-      <span class="status-value">6 fields</span>
+      <span class="status-value">8 fields found</span>
     </div>
     <div class="status-card">
-      <span class="status-label">Translation provider</span>
-      <span class="provider-val">
+      <span class="status-label">Selection Translate</span>
+      <span class="translate-badge">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-2"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
-        Google Translate
+        ID · VI · ZH · KO · JA
       </span>
     </div>
     <div class="history-card">
       <div class="history-header">
         <span class="history-title">Recent Pastes</span>
-        <button class="history-clear">clear</button>
+        <button class="history-clear">clear all</button>
       </div>
       <div class="history-item">
-        <div class="history-icon">&#8862;</div>
-        <div class="history-info"><div class="history-host">crm.company.com</div><div class="history-detail">Table mode &middot; 4 fields filled</div></div>
-        <div class="history-time">2m ago</div>
+        <div class="history-icon">⊞</div>
+        <div class="history-info">
+          <div class="history-host">crm.company.com</div>
+          <div class="history-preview">Alice Johnson · Acme Corporation · alice@acme.com</div>
+        </div>
+        <span class="replay-btn">↺ Replay</span>
+        <div class="history-time">2m</div>
       </div>
       <div class="history-item">
-        <div class="history-icon">&#8801;</div>
-        <div class="history-info"><div class="history-host">erp.company.com</div><div class="history-detail">Form mode &middot; 6 fields filled</div></div>
-        <div class="history-time">18m ago</div>
+        <div class="history-icon">⊞</div>
+        <div class="history-info">
+          <div class="history-host">erp.company.com</div>
+          <div class="history-preview">SKU-001 · Wireless Mouse X200 · 150</div>
+        </div>
+        <span class="replay-btn">↺ Replay</span>
+        <div class="history-time">18m</div>
       </div>
       <div class="history-item">
-        <div class="history-icon">&#8862;</div>
-        <div class="history-info"><div class="history-host">app.hrportal.com</div><div class="history-detail">Table mode &middot; 8 fields filled</div></div>
-        <div class="history-time">1h ago</div>
+        <div class="history-icon">⊞</div>
+        <div class="history-info">
+          <div class="history-host">app.hrportal.com</div>
+          <div class="history-preview">David Lee · Engineering · SG-4421</div>
+        </div>
+        <span class="replay-btn">↺ Replay</span>
+        <div class="history-time">1h</div>
       </div>
     </div>
   </div>
   <div class="popup-footer">
-    <div class="btn-settings">&#9881; Settings &amp; Options</div>
+    <div class="btn-settings">⚙ Settings &amp; Options</div>
   </div>
 </div>
 </body></html>

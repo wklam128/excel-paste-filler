@@ -12,18 +12,18 @@ body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-syst
 .browser-url{flex:1;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:20px;padding:5px 14px;font-size:13px;color:#374151;max-width:640px;margin:0 auto}
 .ext-icon{width:30px;height:30px;background:#1d6f42;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-left:auto}
 .page{flex:1;display:flex;overflow:hidden}
-.form-wrap{flex:1;padding:36px 50px;overflow:hidden}
-.page-title{font-size:22px;font-weight:700;color:#111827;margin-bottom:6px}
-.page-sub{font-size:13px;color:#6b7280;margin-bottom:20px}
-.annotation{display:flex;align-items:center;gap:10px;margin-bottom:18px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px}
+.form-wrap{flex:1;padding:32px 48px;overflow:hidden}
+.page-title{font-size:22px;font-weight:700;color:#111827;margin-bottom:5px}
+.page-sub{font-size:13px;color:#6b7280;margin-bottom:18px}
+.annotation{display:flex;align-items:center;gap:10px;margin-bottom:16px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px}
 .ann-text{font-size:13px;color:#92400e;font-weight:600}
 kbd{background:#f3f4f6;border:1px solid #d1d5db;border-bottom:2px solid #d1d5db;border-radius:4px;padding:2px 7px;font:12px monospace;color:#374151}
 .table-wrap{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.08);overflow:hidden}
-.table-title{font-size:14px;font-weight:700;color:#111;padding:16px 20px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between}
+.table-title{font-size:14px;font-weight:700;color:#111;padding:14px 18px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between}
 .badge{font-size:11px;background:#dcfce7;color:#16a34a;border-radius:10px;padding:2px 10px;font-weight:700}
 table{width:100%;border-collapse:collapse}
-th{background:#f9fafb;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#6b7280;padding:10px 16px;border-bottom:1px solid #e5e7eb;text-align:left}
-td{padding:10px 16px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#111}
+th{background:#f9fafb;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#6b7280;padding:9px 14px;border-bottom:1px solid #e5e7eb;text-align:left}
+td{padding:9px 14px;font-size:13px;border-bottom:1px solid #f3f4f6;color:#111}
 tr.filled td{background:#f0fdf4;color:#15803d;font-weight:600}
 tr.filled td:first-child{border-left:3px solid #22c55e}
 tr.empty td{color:#9ca3af}
@@ -53,13 +53,13 @@ tr.empty td{color:#9ca3af}
 <div class="page">
   <div class="form-wrap">
     <div class="page-title">Bulk Inventory Update</div>
-    <div class="page-sub">Paste multiple rows from Excel to update product records at once</div>
+    <div class="page-sub">Paste multiple rows from Excel to update all product records at once</div>
     <div class="annotation">
       <span style="font-size:18px">&#128203;</span>
-      <span class="ann-text">Selected 4 rows in Excel &rarr; Ctrl+C &rarr; clicked first cell &rarr; Ctrl+V &mdash; all rows filled instantly</span>
+      <span class="ann-text">Selected 5 rows in Excel &rarr; <kbd>Ctrl+C</kbd> &rarr; clicked first cell &rarr; <kbd>Ctrl+V</kbd> &mdash; all rows filled instantly</span>
     </div>
     <div class="table-wrap">
-      <div class="table-title"><span>Product Records</span><span class="badge">&#10003; 4 rows filled</span></div>
+      <div class="table-title"><span>Product Records</span><span class="badge">&#10003; 5 rows filled · 20 fields</span></div>
       <table>
         <thead><tr><th>SKU</th><th>Product Name</th><th>Stock Qty</th><th>Unit Price</th><th>Status</th></tr></thead>
         <tbody>
@@ -67,7 +67,7 @@ tr.empty td{color:#9ca3af}
           <tr class="filled"><td>SKU-002</td><td>USB-C Hub Pro</td><td>84</td><td>$49.99</td><td>In Stock</td></tr>
           <tr class="filled"><td>SKU-003</td><td>Mechanical Keyboard</td><td>32</td><td>$89.00</td><td>Low Stock</td></tr>
           <tr class="filled"><td>SKU-004</td><td>HD Webcam 1080p</td><td>0</td><td>$59.99</td><td>Out of Stock</td></tr>
-          <tr class="empty"><td>SKU-005</td><td></td><td></td><td></td><td></td></tr>
+          <tr class="filled"><td>SKU-005</td><td>Noise Cancel Headset</td><td>210</td><td>$119.00</td><td>In Stock</td></tr>
           <tr class="empty"><td>SKU-006</td><td></td><td></td><td></td><td></td></tr>
         </tbody>
       </table>
@@ -76,7 +76,7 @@ tr.empty td{color:#9ca3af}
   <div class="excel-panel">
     <div class="excel-header">
       <div class="excel-logo">X</div>
-      <div><div style="color:#fff;font-weight:700;font-size:13px">Microsoft Excel</div><div style="font-size:12px;color:rgba(255,255,255,.8)">Inventory_April.xlsx</div></div>
+      <div><div style="color:#fff;font-weight:700;font-size:13px">Microsoft Excel</div><div style="font-size:12px;color:rgba(255,255,255,.8)">Inventory_April2026.xlsx</div></div>
     </div>
     <div class="excel-ribbon">
       <button class="rb-btn">File</button><button class="rb-btn">Home</button>
@@ -89,10 +89,10 @@ tr.empty td{color:#9ca3af}
       <div class="excel-row copied"><div class="ecell num">3</div><div class="ecell">SKU-002</div><div class="ecell">USB-C Hub Pro</div><div class="ecell">84</div></div>
       <div class="excel-row copied"><div class="ecell num">4</div><div class="ecell">SKU-003</div><div class="ecell">Mechanical Keyboard</div><div class="ecell">32</div></div>
       <div class="excel-row copied"><div class="ecell num">5</div><div class="ecell">SKU-004</div><div class="ecell">HD Webcam 1080p</div><div class="ecell">0</div></div>
-      <div class="excel-row"><div class="ecell num">6</div><div class="ecell"></div><div class="ecell"></div><div class="ecell"></div></div>
+      <div class="excel-row copied"><div class="ecell num">6</div><div class="ecell">SKU-005</div><div class="ecell">Noise Cancel Headset</div><div class="ecell">210</div></div>
     </div>
-    <div class="copy-indicator"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>4 rows copied</div>
+    <div class="copy-indicator"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>5 rows copied · rows 2–6</div>
   </div>
 </div>
-<div class="toast">&#10003; Filled 4 rows &middot; 16 fields</div>
+<div class="toast">&#10003; Filled 5 rows &middot; 20 fields</div>
 </body></html>
