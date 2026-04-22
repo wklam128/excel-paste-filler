@@ -422,7 +422,7 @@ code {
 }
 .lang-card:hover .lang-grip { color: var(--green); }
 
-.lang-flag  { font-size: 20px; line-height: 1; margin-top: 4px; }
+.lang-flag  { width: 24px; height: 17px; border-radius: 3px; object-fit: cover; margin-top: 4px; display: block; border: 1px solid rgba(0,0,0,.08); }
 .lang-name  { font-size: 10px; font-weight: 600; color: var(--gray-700); line-height: 1.2; }
 .lang-code  {
   font-size: 9px;

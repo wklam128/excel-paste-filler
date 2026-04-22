@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>*{margin:0;padding:0}html,body{width:128px;height:128px;overflow:hidden}</style></head>
+<body>
+<script>
+const s=128;
+const canvas=document.createElement('canvas');
+canvas.width=canvas.height=s;
+canvas.style.cssText='position:absolute;top:0;left:0;width:128px;height:128px';
+const ctx=canvas.getContext('2d');
+const r=s*0.22;
+ctx.fillStyle='#1d6f42';ctx.beginPath();ctx.roundRect(0,0,s,s,r);ctx.fill();
+const glow=ctx.createRadialGradient(s*.5,s*.15,0,s*.5,s*.5,s*.7);
+glow.addColorStop(0,'rgba(255,255,255,0.12)');glow.addColorStop(1,'rgba(0,0,0,0)');
+ctx.fillStyle=glow;ctx.beginPath();ctx.roundRect(0,0,s,s,r);ctx.fill();
+const pad=s*.14,iw=s-pad*2,ih=s-pad*2;
+const cbX=pad,cbY=pad+ih*.1,cbW=iw*.82,cbH=ih*.84,cbR=s*.06;
+ctx.fillStyle='rgba(255,255,255,0.15)';ctx.beginPath();ctx.roundRect(cbX,cbY,cbW,cbH,cbR);ctx.fill();
+ctx.strokeStyle='#fff';ctx.lineWidth=s*.05;ctx.lineJoin='round';
+ctx.beginPath();ctx.roundRect(cbX,cbY,cbW,cbH,cbR);ctx.stroke();
+const clipW=cbW*.46,clipH=ih*.14,clipX=cbX+(cbW-clipW)/2,clipY=pad;
+ctx.fillStyle='rgba(255,255,255,0.2)';ctx.strokeStyle='#fff';ctx.lineWidth=s*.045;
+ctx.beginPath();ctx.roundRect(clipX,clipY,clipW,clipH,s*.04);ctx.fill();ctx.stroke();
+ctx.strokeStyle='rgba(255,255,255,0.85)';ctx.lineWidth=s*.038;ctx.lineCap='round';
+const lsx=cbX+cbW*.15,lex=cbX+cbW*.85;
+ctx.beginPath();
+ctx.moveTo(lsx,cbY+cbH*.38);ctx.lineTo(lex,cbY+cbH*.38);
+ctx.moveTo(lsx,cbY+cbH*.56);ctx.lineTo(lex*.96,cbY+cbH*.56);
+ctx.moveTo(lsx,cbY+cbH*.74);ctx.lineTo(lex*.88,cbY+cbH*.74);
+ctx.stroke();
+const br=s*.22,bcx=pad+cbW-br*.3,bcy=pad+cbH+ih*.1-br*.3;
+ctx.fillStyle='rgba(0,0,0,0.25)';ctx.beginPath();ctx.arc(bcx+s*.01,bcy+s*.01,br,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(bcx,bcy,br,0,Math.PI*2);ctx.fill();
+ctx.strokeStyle='#fff';ctx.lineWidth=s*.032;ctx.beginPath();ctx.arc(bcx,bcy,br,0,Math.PI*2);ctx.stroke();
+ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+ctx.font=`900 ${Math.round(br*.82)}px system-ui`;ctx.fillText('A',bcx-br*.28,bcy-br*.18);
+ctx.font=`${Math.round(br*.55)}px system-ui`;ctx.fillText('\u2192',bcx+br*.04,bcy-br*.15);
+ctx.font=`900 ${Math.round(br*.72)}px system-ui`;ctx.fillText('\u6587',bcx+br*.48,bcy+br*.22);
+document.body.appendChild(canvas);
+</script></body></html>

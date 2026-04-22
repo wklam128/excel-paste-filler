@@ -23,7 +23,19 @@
       "Bash(git remote *)",
       "Bash(git branch *)",
       "Bash(git push *)",
-      "Bash(git config *)"
+      "Bash(git config *)",
+      "Bash('C:/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --screenshot=C:/Users/Administrator/Desktop/Codex/EFS_ADDON/screenshots/promo_small.png --window-size=440,280 --hide-scrollbars --no-sandbox file:///C:/Users/Administrator/Desktop/Codex/EFS_ADDON/screenshots/promo_small.html)",
+      "Bash('C:/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --screenshot=C:/Users/Administrator/Desktop/Codex/EFS_ADDON/screenshots/promo_marquee.png --window-size=1400,560 --hide-scrollbars --no-sandbox file:///C:/Users/Administrator/Desktop/Codex/EFS_ADDON/screenshots/promo_marquee.html)",
+      "Bash('C:/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --screenshot=C:/Users/Administrator/Desktop/Codex/EFS_ADDON/icons/icon128.png --window-size=128,128 --hide-scrollbars --no-sandbox file:///C:/Users/Administrator/Desktop/Codex/EFS_ADDON/icons/generate-icons.html)",
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)",
+      "Bash(python *)",
+      "Bash(git stash *)",
+      "Read(//c/Users/Administrator/Desktop/Codex/**)",
+      "Bash(zip -r EPF_v2.1.2.zip EFS_ADDON --exclude \"EFS_ADDON/.claude/*\" \"EFS_ADDON/icons/*.html\" \"EFS_ADDON/screenshots/*.html\" \"EFS_ADDON/test/*\" \"EFS_ADDON/promo_video_script.txt\" \"EFS_ADDON/update_v2.1.1.txt\")",
+      "Bash(git tag *)",
+      "Bash(npm list *)",
+      "Bash(npm install *)"
     ]
   }
 }

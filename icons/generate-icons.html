@@ -1,107 +1,232 @@
 <!DOCTYPE html>
-<!--
-  generate-icons.html
-  Open this page in Chrome, then right-click each canvas and "Save image as"
-  to get the PNG icon files required by the extension.
-
-  Save them as:
-    icon16.png  → 16×16
-    icon32.png  → 32×32
-    icon48.png  → 48×48
-    icon128.png → 128×128
--->
-<html><head><meta charset="UTF-8"><title>Generate Icons</title>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Generate Icons — Excel Paste Filler v2.1.1</title>
 <style>
-  body { font: 14px system-ui; padding: 20px; background: #f3f4f6; }
-  h2 { margin-bottom: 16px; }
-  .grid { display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; }
-  .item { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; color: #6b7280; }
-  canvas { border-radius: 20%; box-shadow: 0 2px 8px rgba(0,0,0,0.15); cursor: pointer; }
-  .hint { margin-top: 20px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; max-width: 500px; font-size: 13px; line-height: 1.6; }
-  .btn { margin-top: 16px; padding: 8px 18px; background: #1d6f42; color: #fff; border: none; border-radius: 6px; cursor: pointer; font: 600 13px system-ui; }
+  body { font: 14px system-ui; padding: 28px; background: #f3f4f6; }
+  h2 { margin-bottom: 4px; color: #111827; }
+  p  { font-size: 12px; color: #6b7280; margin-bottom: 20px; }
+  .grid { display: flex; gap: 32px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 24px; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; color: #6b7280; }
+  .size-label { font-weight: 700; color: #374151; }
+  canvas { box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
+  .btn { padding: 10px 24px; background: #1d6f42; color: #fff; border: none; border-radius: 8px; cursor: pointer; font: 700 14px system-ui; }
+  .btn:hover { background: #155232; }
 </style>
 </head>
 <body>
-<h2>Excel Form Filler — Icon Generator</h2>
+<h2>Excel Paste Filler — Icon Generator v2.1.1</h2>
+<p>Redesigned icon: clipboard paste + translate globe badge</p>
 <div class="grid" id="grid"></div>
-<div class="hint">
-  <strong>Instructions:</strong><br>
-  1. Click <strong>Download All Icons</strong> below to save all 4 PNG files.<br>
-  2. Move the downloaded files into the <code>icons/</code> folder of the extension.<br>
-  3. Reload the extension in Chrome (<code>chrome://extensions</code> → Reload).
-</div>
-<button class="btn" onclick="downloadAll()">Download All Icons</button>
+<button class="btn" onclick="downloadAll()">⬇ Download All Icons</button>
 
 <script>
-  const SIZES = [16, 32, 48, 128];
-  const BG    = '#1d6f42';
-  const FG    = '#ffffff';
+const SIZES = [16, 32, 48, 128];
 
-  function drawIcon(canvas, size) {
-    const ctx = canvas.getContext('2d');
-    const s   = size;
-    const r   = s * 0.18; // corner radius
+function drawIcon(canvas, size) {
+  const ctx = canvas.getContext('2d');
+  const s = size;
 
-    // Background rounded rect
-    ctx.fillStyle = BG;
+  // ── Background: deep green rounded rect ──
+  const r = s * 0.22;
+  ctx.fillStyle = '#1d6f42';
+  ctx.beginPath();
+  ctx.roundRect(0, 0, s, s, r);
+  ctx.fill();
+
+  // subtle inner glow at top
+  const glow = ctx.createRadialGradient(s*0.5, s*0.15, 0, s*0.5, s*0.5, s*0.7);
+  glow.addColorStop(0, 'rgba(255,255,255,0.12)');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.roundRect(0, 0, s, s, r);
+  ctx.fill();
+
+  if (s <= 16) {
+    // ── 16px: simple grid only ──
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.2;
+    ctx.lineCap = 'round';
+    const p = s * 0.2;
+    const w = s - p * 2;
+    const h = s - p * 2;
+    ctx.strokeRect(p, p, w, h);
     ctx.beginPath();
-    ctx.roundRect(0, 0, s, s, r);
-    ctx.fill();
-
-    // Draw a simple spreadsheet grid icon
-    ctx.strokeStyle = FG;
-    ctx.fillStyle   = FG;
-    ctx.lineWidth   = Math.max(1, s * 0.07);
-    ctx.lineCap     = 'round';
-
-    const pad = s * 0.18;
-    const w   = s - pad * 2;
-    const h   = s - pad * 2;
-
-    // Outer rect
-    const lw = ctx.lineWidth;
-    ctx.strokeRect(pad, pad, w, h);
-
-    // Horizontal dividers
-    ctx.beginPath();
-    ctx.moveTo(pad, pad + h * 0.38);
-    ctx.lineTo(pad + w, pad + h * 0.38);
-    ctx.moveTo(pad, pad + h * 0.67);
-    ctx.lineTo(pad + w, pad + h * 0.67);
+    ctx.moveTo(p, p + h * 0.4);  ctx.lineTo(p + w, p + h * 0.4);
+    ctx.moveTo(p, p + h * 0.7);  ctx.lineTo(p + w, p + h * 0.7);
+    ctx.moveTo(p + w * 0.4, p);  ctx.lineTo(p + w * 0.4, p + h);
     ctx.stroke();
-
-    // Vertical divider
-    ctx.beginPath();
-    ctx.moveTo(pad + w * 0.38, pad);
-    ctx.lineTo(pad + w * 0.38, pad + h);
-    ctx.stroke();
+    return;
   }
 
-  const grid = document.getElementById('grid');
-  const canvases = {};
+  if (s === 32) {
+    // ── 32px: clipboard + small globe dot ──
+    ctx.strokeStyle = '#fff';
+    ctx.fillStyle = '#fff';
+    ctx.lineWidth = 1.8;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
-  SIZES.forEach((size) => {
-    const canvas = document.createElement('canvas');
-    canvas.width  = size;
-    canvas.height = size;
-    canvas.title  = `Right-click → Save image as icon${size}.png`;
-    drawIcon(canvas, size);
-    canvases[size] = canvas;
+    // clipboard body
+    const p = s * 0.18;
+    const w = s - p * 2;
+    const h = s - p * 2;
+    ctx.beginPath();
+    ctx.roundRect(p, p + h*0.12, w, h*0.82, 2);
+    ctx.stroke();
 
-    const item = document.createElement('div');
-    item.className = 'item';
-    item.innerHTML = `<span>icon${size}.png</span>`;
-    item.prepend(canvas);
-    grid.appendChild(item);
+    // clipboard clip at top
+    const cw = w * 0.45;
+    const ch = h * 0.18;
+    const cx = s/2 - cw/2;
+    const cy = p;
+    ctx.beginPath();
+    ctx.roundRect(cx, cy, cw, ch, 2);
+    ctx.stroke();
+
+    // lines inside clipboard
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(p + w*0.2, p + h*0.42); ctx.lineTo(p + w*0.8, p + h*0.42);
+    ctx.moveTo(p + w*0.2, p + h*0.58); ctx.lineTo(p + w*0.72, p + h*0.58);
+    ctx.stroke();
+
+    // small globe badge bottom-right
+    const bx = p + w * 0.72, by = p + h * 0.68, br = s * 0.14;
+    ctx.fillStyle = '#22c55e';
+    ctx.beginPath(); ctx.arc(bx, by, br + 1.5, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = `bold ${Math.round(s*0.18)}px system-ui`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('A', bx, by + 0.5);
+    return;
+  }
+
+  // ── 48px and 128px: full detailed icon ──
+  const pad = s * 0.14;
+  const iw  = s - pad * 2;   // inner width
+  const ih  = s - pad * 2;   // inner height
+
+  // ── Clipboard body ──
+  const cbX = pad;
+  const cbY = pad + ih * 0.1;
+  const cbW = iw * 0.82;
+  const cbH = ih * 0.84;
+  const cbR = s * 0.06;
+
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.beginPath();
+  ctx.roundRect(cbX, cbY, cbW, cbH, cbR);
+  ctx.fill();
+
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = s * 0.05;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.roundRect(cbX, cbY, cbW, cbH, cbR);
+  ctx.stroke();
+
+  // ── Clipboard clip (top centre) ──
+  const clipW = cbW * 0.46;
+  const clipH = ih * 0.14;
+  const clipX = cbX + (cbW - clipW) / 2;
+  const clipY = pad;
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = s * 0.045;
+  ctx.beginPath();
+  ctx.roundRect(clipX, clipY, clipW, clipH, s * 0.04);
+  ctx.fill();
+  ctx.stroke();
+
+  // ── Grid lines inside clipboard ──
+  ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+  ctx.lineWidth = s * 0.038;
+  ctx.lineCap = 'round';
+
+  // horizontal lines
+  const lineStartX = cbX + cbW * 0.15;
+  const lineEndX   = cbX + cbW * 0.85;
+  const line1Y = cbY + cbH * 0.38;
+  const line2Y = cbY + cbH * 0.56;
+  const line3Y = cbY + cbH * 0.74;
+
+  ctx.beginPath();
+  ctx.moveTo(lineStartX, line1Y); ctx.lineTo(lineEndX, line1Y);
+  ctx.moveTo(lineStartX, line2Y); ctx.lineTo(lineEndX * 0.96, line2Y);
+  ctx.moveTo(lineStartX, line3Y); ctx.lineTo(lineEndX * 0.88, line3Y);
+  ctx.stroke();
+
+  // ── Translate globe badge (bottom-right) ──
+  const badgeR  = s * 0.22;
+  const badgeCX = pad + cbW - badgeR * 0.3;
+  const badgeCY = pad + cbH + ih * 0.1 - badgeR * 0.3;
+
+  // badge shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.beginPath();
+  ctx.arc(badgeCX + s*0.01, badgeCY + s*0.01, badgeR, 0, Math.PI*2);
+  ctx.fill();
+
+  // badge circle — bright green
+  ctx.fillStyle = '#22c55e';
+  ctx.beginPath();
+  ctx.arc(badgeCX, badgeCY, badgeR, 0, Math.PI*2);
+  ctx.fill();
+
+  // white border ring
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = s * 0.032;
+  ctx.beginPath();
+  ctx.arc(badgeCX, badgeCY, badgeR, 0, Math.PI*2);
+  ctx.stroke();
+
+  // translate icon inside badge: "A→文"
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  if (s >= 128) {
+    ctx.font = `900 ${Math.round(badgeR * 0.82)}px system-ui`;
+    ctx.fillText('A', badgeCX - badgeR * 0.28, badgeCY - badgeR * 0.18);
+    ctx.font = `${Math.round(badgeR * 0.55)}px system-ui`;
+    ctx.fillText('→', badgeCX + badgeR * 0.04, badgeCY - badgeR * 0.15);
+    ctx.font = `900 ${Math.round(badgeR * 0.72)}px system-ui`;
+    ctx.fillText('文', badgeCX + badgeR * 0.48, badgeCY + badgeR * 0.22);
+  } else {
+    // 48px — simpler translate symbol
+    ctx.font = `900 ${Math.round(badgeR * 1.1)}px system-ui`;
+    ctx.fillText('A', badgeCX - badgeR*0.22, badgeCY - badgeR*0.1);
+    ctx.font = `${Math.round(badgeR * 0.75)}px system-ui`;
+    ctx.fillText('文', badgeCX + badgeR*0.38, badgeCY + badgeR*0.2);
+  }
+}
+
+const grid = document.getElementById('grid');
+const canvases = {};
+
+SIZES.forEach(size => {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  drawIcon(canvas, size);
+  canvases[size] = canvas;
+
+  const item = document.createElement('div');
+  item.className = 'item';
+  item.innerHTML = `<span class="size-label">${size}×${size}</span><span>icon${size}.png</span>`;
+  item.prepend(canvas);
+  grid.appendChild(item);
+});
+
+function downloadAll() {
+  SIZES.forEach(size => {
+    const a = document.createElement('a');
+    a.href = canvases[size].toDataURL('image/png');
+    a.download = `icon${size}.png`;
+    a.click();
   });
-
-  function downloadAll() {
-    SIZES.forEach((size) => {
-      const a = document.createElement('a');
-      a.href     = canvases[size].toDataURL('image/png');
-      a.download = `icon${size}.png`;
-      a.click();
-    });
-  }
+}
 </script>
 </body></html>

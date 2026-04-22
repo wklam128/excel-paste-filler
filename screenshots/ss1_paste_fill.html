@@ -4,111 +4,101 @@
 <meta charset="UTF-8">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-system,sans-serif;background:#f3f4f6;display:flex;flex-direction:column}
-.browser-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
-.browser-dots{display:flex;gap:6px}
-.dot{width:13px;height:13px;border-radius:50%}
-.dot-r{background:#ff5f57}.dot-y{background:#ffbd2e}.dot-g{background:#28c840}
-.browser-url{flex:1;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:20px;padding:5px 14px;font-size:13px;color:#374151;max-width:640px;margin:0 auto}
-.ext-icon{width:30px;height:30px;background:#1d6f42;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-left:auto}
-.page{flex:1;display:flex;overflow:hidden}
-.form-wrap{flex:1;padding:36px 56px;overflow:hidden}
-.page-title{font-size:22px;font-weight:700;color:#111827;margin-bottom:5px}
-.page-sub{font-size:13px;color:#6b7280;margin-bottom:20px}
-.annotation{display:flex;align-items:center;gap:10px;margin-bottom:20px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px}
-.ann-text{font-size:13px;color:#92400e;font-weight:600}
-kbd{background:#f3f4f6;border:1px solid #d1d5db;border-bottom:2px solid #d1d5db;border-radius:4px;padding:2px 7px;font:12px monospace;color:#374151}
-.form-card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.08);padding:26px 30px}
-.form-title{font-size:15px;font-weight:700;color:#111;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid #f3f4f6}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.form-group{display:flex;flex-direction:column;gap:5px}
-.form-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280}
-.form-input{padding:9px 12px;border:1px solid #d1d5db;border-radius:7px;font-size:13px;color:#111;background:#fff}
-.form-input.filled{border:2px solid #22c55e;background:#f0fdf4;color:#15803d;font-weight:600}
-.form-input.empty{color:#9ca3af}
-.excel-panel{width:340px;background:#217346;display:flex;flex-direction:column;flex-shrink:0}
-.excel-header{background:#185c37;padding:10px 16px;display:flex;align-items:center;gap:8px}
-.excel-logo{font-size:15px;font-weight:800;color:#fff}
-.excel-ribbon{background:#217346;padding:6px 10px;border-bottom:1px solid #1a5e38;display:flex;gap:6px}
-.rb-btn{background:rgba(255,255,255,.15);border:none;border-radius:4px;padding:4px 10px;font-size:11px;color:#fff}
-.excel-grid{flex:1;background:#fff;overflow:hidden}
-.excel-cols{display:grid;grid-template-columns:36px repeat(4,1fr);background:#f2f2f2;border-bottom:1px solid #d1d5db}
-.ecol{padding:4px 8px;font-size:11px;font-weight:700;color:#595959;border-right:1px solid #d1d5db;text-align:center}
-.excel-row{display:grid;grid-template-columns:36px repeat(4,1fr);border-bottom:1px solid #e5e7eb}
-.excel-row.copied{background:#e8f5e9;outline:2px dashed #22c55e;outline-offset:-1px}
-.ecell{padding:5px 8px;font-size:12px;border-right:1px solid #e5e7eb;color:#111;white-space:nowrap;overflow:hidden}
-.ecell.num{color:#595959;background:#f9f9f9;text-align:center;font-weight:600}
-.ecell.hdr{font-weight:700;color:#185c37;background:#e8f5e9}
-.copy-indicator{background:#185c37;border:1px solid #22c55e;border-radius:6px;margin:8px;padding:8px 12px;font-size:11px;color:#86efac;display:flex;align-items:center;gap:6px}
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1d6f42;color:#fff;padding:10px 24px;border-radius:10px;font:700 14px system-ui;box-shadow:0 6px 20px rgba(0,0,0,.2);white-space:nowrap}
-.version-chip{position:absolute;top:10px;right:180px;background:#1d6f42;color:#fff;font-size:10px;font-weight:700;border-radius:20px;padding:3px 10px;letter-spacing:.04em}
+body{width:1280px;height:800px;overflow:hidden;font-family:system-ui,-apple-system,sans-serif;background:#0d3320;position:relative}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px}
+.blob{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(34,197,94,.15) 0%,transparent 65%);top:-200px;right:-100px}
+
+.layout{position:relative;z-index:2;display:flex;height:100%;padding:56px 72px;gap:64px;align-items:center}
+
+/* LEFT */
+.left{flex:0 0 460px;display:flex;flex-direction:column;gap:0}
+.feature-tag{display:inline-flex;align-items:center;gap:7px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:#4ade80;letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;width:fit-content}
+.headline{font-size:52px;font-weight:900;color:#fff;line-height:1.05;letter-spacing:-1px;margin-bottom:18px}
+.headline span{color:#4ade80}
+.desc{font-size:17px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:32px}
+.steps{display:flex;flex-direction:column;gap:14px}
+.step{display:flex;align-items:center;gap:14px}
+.step-num{width:32px;height:32px;border-radius:50%;background:#22c55e;color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-text{font-size:15px;color:rgba(255,255,255,.8);font-weight:500}
+.step-text strong{color:#fff}
+
+/* RIGHT */
+.right{flex:1;display:flex;flex-direction:column;gap:16px}
+
+.excel-card{background:#1a5c38;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.card-header{background:#144d2e;padding:12px 18px;display:flex;align-items:center;gap:10px}
+.card-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.9)}
+.card-badge{font-size:11px;font-weight:700;background:rgba(34,197,94,.2);border:1px solid rgba(34,197,94,.4);color:#4ade80;border-radius:10px;padding:2px 10px;margin-left:auto}
+.excel-grid{background:#fff;display:grid;grid-template-columns:36px repeat(5,1fr)}
+.ecell{padding:8px 10px;font-size:13px;border-right:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;color:#111;white-space:nowrap;overflow:hidden}
+.ecell.num{background:#f9fafb;color:#9ca3af;text-align:center;font-weight:600;font-size:12px}
+.ecell.hdr{background:#dcfce7;color:#166534;font-weight:700;font-size:12px}
+.ecell.sel{background:#bbf7d0;font-weight:600;color:#166534}
+.copy-bar{background:#144d2e;padding:8px 18px;font-size:12px;color:#86efac;display:flex;align-items:center;gap:8px}
+
+.arrow-row{display:flex;align-items:center;justify-content:center;gap:0}
+.big-arrow{font-size:28px;color:rgba(255,255,255,.4);text-align:center}
+
+.form-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.form-header{background:#f9fafb;padding:12px 18px;border-bottom:1px solid #e5e7eb;font-size:13px;font-weight:700;color:#374151;display:flex;align-items:center;justify-content:space-between}
+.filled-badge{font-size:11px;font-weight:700;background:#dcfce7;color:#16a34a;border-radius:8px;padding:2px 10px}
+.form-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.f-group{display:flex;flex-direction:column;gap:4px}
+.f-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af}
+.f-input{padding:8px 10px;border-radius:6px;font-size:13px;font-weight:600}
+.f-input.filled{border:2px solid #22c55e;background:#f0fdf4;color:#15803d}
+.f-input.empty{border:1.5px solid #e5e7eb;background:#fafafa;color:#d1d5db}
+.toast{background:#1d6f42;color:#fff;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.4);margin-top:4px;align-self:center}
 </style>
 </head>
 <body>
-<div class="browser-bar">
-  <div class="browser-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
-  <div class="browser-url">🔒 https://crm.company.com/orders/new</div>
-  <div class="ext-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div>
-</div>
-<div class="page">
-  <div class="form-wrap">
-    <div class="page-title">New Customer Order</div>
-    <div class="page-sub">Fill in the form below to create a new order record</div>
-    <div class="annotation">
-      <span style="font-size:18px">⌨️</span>
-      <span class="ann-text">Copied row from Excel → clicked "Customer Name" → pressed <kbd>Ctrl+V</kbd> — all adjacent fields filled instantly</span>
+<div class="grid"></div>
+<div class="blob"></div>
+<div class="layout">
+  <div class="left">
+    <div class="feature-tag">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+      Excel Paste Filler
     </div>
+    <div class="headline">Paste Excel.<br><span>Fill any form.</span></div>
+    <div class="desc">Copy cells from Excel or Google Sheets, click the first field — all adjacent fields fill in order automatically.</div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Copy</strong> a row in Excel (Ctrl+C)</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Click</strong> the first form field</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Paste</strong> — all fields fill instantly (Ctrl+V)</div></div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="excel-card">
+      <div class="card-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+        <span class="card-title">CustomerList.xlsx — Microsoft Excel</span>
+        <span class="card-badge">Row 2 Copied ✓</span>
+      </div>
+      <div class="excel-grid">
+        <div class="ecell num"></div><div class="ecell hdr">Full Name</div><div class="ecell hdr">Company</div><div class="ecell hdr">Email</div><div class="ecell hdr">Phone</div><div class="ecell hdr">Region</div>
+        <div class="ecell num">2</div><div class="ecell sel">Alice Johnson</div><div class="ecell sel">Acme Corporation</div><div class="ecell sel">alice@acme.com</div><div class="ecell sel">+1 555 123 4567</div><div class="ecell sel">Asia Pacific</div>
+        <div class="ecell num">3</div><div class="ecell">Bob Smith</div><div class="ecell">Globex Ltd</div><div class="ecell">bob@globex.com</div><div class="ecell">+44 20 7946 0000</div><div class="ecell">Europe</div>
+        <div class="ecell num">4</div><div class="ecell">Carol Tan</div><div class="ecell">TechStart Pte</div><div class="ecell">carol@ts.sg</div><div class="ecell">+65 9123 4567</div><div class="ecell">Asia Pacific</div>
+      </div>
+      <div class="copy-bar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>5 cells copied to clipboard — ready to paste</div>
+    </div>
+    <div style="text-align:center;font-size:28px;color:rgba(255,255,255,.35)">↓ Ctrl+V</div>
     <div class="form-card">
-      <div class="form-title">Customer Information</div>
-      <div class="form-row">
-        <div class="form-group"><span class="form-label">Customer Name</span><input class="form-input filled" value="Alice Johnson" readonly></div>
-        <div class="form-group"><span class="form-label">Company</span><input class="form-input filled" value="Acme Corporation" readonly></div>
+      <div class="form-header">
+        New Customer Order — crm.company.com
+        <span class="filled-badge">✓ 5 fields filled</span>
       </div>
-      <div class="form-row">
-        <div class="form-group"><span class="form-label">Email Address</span><input class="form-input filled" value="alice@acme.com" readonly></div>
-        <div class="form-group"><span class="form-label">Phone Number</span><input class="form-input filled" value="+1 555 123 4567" readonly></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><span class="form-label">Order Reference</span><input class="form-input filled" value="ORD-2026-0441" readonly></div>
-        <div class="form-group"><span class="form-label">Region</span><input class="form-input filled" value="Asia Pacific" readonly></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><span class="form-label">Country</span><input class="form-input empty" placeholder="Select country…" readonly></div>
-        <div class="form-group"><span class="form-label">Order Date</span><input class="form-input empty" placeholder="DD / MM / YYYY" readonly></div>
+      <div class="form-body">
+        <div class="f-group"><div class="f-label">Full Name</div><input class="f-input filled" value="Alice Johnson" readonly></div>
+        <div class="f-group"><div class="f-label">Company</div><input class="f-input filled" value="Acme Corporation" readonly></div>
+        <div class="f-group"><div class="f-label">Email</div><input class="f-input filled" value="alice@acme.com" readonly></div>
+        <div class="f-group"><div class="f-label">Phone</div><input class="f-input filled" value="+1 555 123 4567" readonly></div>
+        <div class="f-group"><div class="f-label">Region</div><input class="f-input filled" value="Asia Pacific" readonly></div>
+        <div class="f-group"><div class="f-label">Order Date</div><input class="f-input empty" placeholder="DD/MM/YYYY" readonly></div>
       </div>
     </div>
-  </div>
-  <div class="excel-panel">
-    <div class="excel-header">
-      <div class="excel-logo">X</div>
-      <div><div style="color:#fff;font-weight:700;font-size:13px">Microsoft Excel</div><div style="font-size:12px;color:rgba(255,255,255,.8)">CustomerList.xlsx</div></div>
-    </div>
-    <div class="excel-ribbon">
-      <button class="rb-btn">File</button><button class="rb-btn">Home</button><button class="rb-btn">Insert</button>
-      <button class="rb-btn" style="background:rgba(255,255,255,.35)">Copy ✓</button>
-    </div>
-    <div class="excel-grid">
-      <div class="excel-cols">
-        <div class="ecol"></div><div class="ecol">A</div><div class="ecol">B</div><div class="ecol">C</div><div class="ecol">D</div>
-      </div>
-      <div class="excel-row">
-        <div class="ecell num">1</div><div class="ecell hdr">Name</div><div class="ecell hdr">Company</div><div class="ecell hdr">Email</div><div class="ecell hdr">Phone</div>
-      </div>
-      <div class="excel-row copied">
-        <div class="ecell num">2</div><div class="ecell">Alice Johnson</div><div class="ecell">Acme Corporation</div><div class="ecell">alice@acme.com</div><div class="ecell">+1 555 123 4567</div>
-      </div>
-      <div class="excel-row">
-        <div class="ecell num">3</div><div class="ecell">Bob Smith</div><div class="ecell">Globex Ltd</div><div class="ecell">bob@globex.com</div><div class="ecell">+44 20 7946 0000</div>
-      </div>
-      <div class="excel-row">
-        <div class="ecell num">4</div><div class="ecell">Carol Tan</div><div class="ecell">TechStart Pte</div><div class="ecell">carol@ts.sg</div><div class="ecell">+65 9123 4567</div>
-      </div>
-      <div class="excel-row">
-        <div class="ecell num">5</div><div class="ecell">David Lee</div><div class="ecell">Innoworks Co</div><div class="ecell">d.lee@inno.io</div><div class="ecell">+82 10 9876 5432</div>
-      </div>
-    </div>
-    <div class="copy-indicator"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Row 2 copied to clipboard</div>
+    <div class="toast"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Filled 5 fields automatically</div>
   </div>
 </div>
-<div class="toast">✓ Filled 6 fields automatically</div>
 </body></html>

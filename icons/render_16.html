@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>*{margin:0;padding:0}html,body{width:16px;height:16px;overflow:hidden}</style></head>
+<body>
+<script>
+const s=16;
+const canvas=document.createElement('canvas');
+canvas.width=canvas.height=s;
+canvas.style.cssText='position:absolute;top:0;left:0;width:16px;height:16px';
+const ctx=canvas.getContext('2d');
+const r=s*0.22;
+ctx.fillStyle='#1d6f42';ctx.beginPath();ctx.roundRect(0,0,s,s,r);ctx.fill();
+const glow=ctx.createRadialGradient(s*.5,s*.15,0,s*.5,s*.5,s*.7);
+glow.addColorStop(0,'rgba(255,255,255,0.12)');glow.addColorStop(1,'rgba(0,0,0,0)');
+ctx.fillStyle=glow;ctx.beginPath();ctx.roundRect(0,0,s,s,r);ctx.fill();
+ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.lineCap='round';
+const p=s*.2,w=s-p*2,h=s-p*2;
+ctx.strokeRect(p,p,w,h);
+ctx.beginPath();
+ctx.moveTo(p,p+h*.4);ctx.lineTo(p+w,p+h*.4);
+ctx.moveTo(p,p+h*.7);ctx.lineTo(p+w,p+h*.7);
+ctx.moveTo(p+w*.4,p);ctx.lineTo(p+w*.4,p+h);
+ctx.stroke();
+document.body.appendChild(canvas);
+</script></body></html>

@@ -166,6 +166,7 @@
 
     let totalFilled = 0;
     let totalCells  = 0;
+    let lastFilledEl = null;
 
     // Iterate Excel rows.
     for (let r = 0; r < grid.length; r++) {
@@ -192,12 +193,11 @@
         const el = await waitForWritable(cell, 300);
         if (!el) continue;
 
-        if (config.highlightFields) EFF_Autofill.highlightElement(el, '2px solid #f59e0b');
-
         const ok = await writeIntoField(el, val);
         if (ok) {
           if (config.highlightFields) EFF_Autofill.highlightElement(el, '2px solid #22c55e');
           totalFilled++;
+          lastFilledEl = el;
         }
 
         // Yield one tick so the framework can commit the change
@@ -205,6 +205,8 @@
         await tick();
       }
     }
+
+    if (lastFilledEl) lastFilledEl.blur();
 
     if (config.showToast) {
       const rows = grid.length;
@@ -697,20 +699,22 @@
     if (startIdx === -1) startIdx = fields.findIndex(f => f.element.contains(startEl) || startEl.contains(f.element));
     if (startIdx === -1) startIdx = 0;
 
-    let filled = 0, pointer = startIdx;
+    let filled = 0, pointer = startIdx, lastFilledEl = null;
     for (const val of values) {
       if (config.skipEmptyCells && val.trim() === '') continue;
       if (pointer >= fields.length) break;
       const fi = fields[pointer++];
       if (!document.contains(fi.element)) continue;
-      if (config.highlightFields) EFF_Autofill.highlightElement(fi.element, '2px solid #f59e0b');
       const ok = await writeIntoField(fi.element, val);
       if (ok) {
         if (config.highlightFields) EFF_Autofill.highlightElement(fi.element, '2px solid #22c55e');
         filled++;
+        lastFilledEl = fi.element;
       }
       await tick();
     }
+
+    if (lastFilledEl) lastFilledEl.blur();
 
     if (config.showToast) showToast(`Filled ${filled} field${filled !== 1 ? 's' : ''}`, 'ok');
     recordHistory(filled, values.length, 'form', _lastTSV);
@@ -1591,12 +1595,12 @@
 
   // API codes, display labels, and BCP-47 speech codes for each target language.
   const LANG_META = {
-    en: { api: 'en',    label: 'EN', speech: 'en-US' },
-    id: { api: 'id',    label: 'ID', speech: 'id-ID' },
-    vi: { api: 'vi',    label: 'VI', speech: 'vi-VN' },
-    zh: { api: 'zh-CN', label: 'ZH', speech: 'zh-CN' },
-    ko: { api: 'ko',    label: 'KO', speech: 'ko-KR' },
-    ja: { api: 'ja',    label: 'JA', speech: 'ja-JP' },
+    en: { api: 'en',    label: 'EN', speech: 'en-US', flag: 'en' },
+    id: { api: 'id',    label: 'ID', speech: 'id-ID', flag: 'id' },
+    vi: { api: 'vi',    label: 'VI', speech: 'vi-VN', flag: 'vi' },
+    zh: { api: 'zh-CN', label: 'ZH', speech: 'zh-CN', flag: 'zh' },
+    ko: { api: 'ko',    label: 'KO', speech: 'ko-KR', flag: 'ko' },
+    ja: { api: 'ja',    label: 'JA', speech: 'ja-JP', flag: 'ja' },
   };
 
   // ── Speech synthesis ──────────────────────────────────────────────────────────
@@ -1957,7 +1961,12 @@
     row.innerHTML = '';
     const badge = document.createElement('span');
     badge.className = 'epf-tip-lang-badge';
-    badge.textContent = LANG_META[l].label;
+    const flagImg = document.createElement('img');
+    flagImg.src = chrome.runtime.getURL(`icons/flags/${LANG_META[l].flag}.svg`);
+    flagImg.className = 'epf-tip-flag';
+    flagImg.alt = LANG_META[l].label;
+    badge.appendChild(flagImg);
+    badge.appendChild(document.createTextNode(LANG_META[l].label));
     row.appendChild(badge);
 
     if (source === 'loading') {

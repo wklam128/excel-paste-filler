@@ -133,17 +133,16 @@
   }
 
   /**
-   * Flash an outline on a field for visual feedback.
-   * Restores the original style after 1.8 s.
+   * Flash an outline on a field for visual feedback, then remove it after 1.8 s.
+   * Cancels any previous pending restore on the same element.
    */
   function highlightElement(el, outlineStyle) {
-    const origOutline    = el.style.outline;
-    const origTransition = el.style.transition;
-    el.style.transition  = 'outline 0.12s ease';
-    el.style.outline     = outlineStyle;
-    setTimeout(() => {
-      el.style.outline    = origOutline;
-      el.style.transition = origTransition;
+    clearTimeout(el._epfHL);
+    el.style.transition = 'outline 0.3s ease';
+    el.style.outline    = outlineStyle;
+    el._epfHL = setTimeout(() => {
+      el.style.outline    = '';
+      el.style.transition = '';
     }, 1800);
   }
 

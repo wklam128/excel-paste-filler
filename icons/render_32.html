@@ -1,0 +1,30 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>*{margin:0;padding:0}html,body{width:32px;height:32px;overflow:hidden}</style></head>
+<body>
+<script>
+const s=32;
+const canvas=document.createElement('canvas');
+canvas.width=canvas.height=s;
+canvas.style.cssText='position:absolute;top:0;left:0;width:32px;height:32px';
+const ctx=canvas.getContext('2d');
+const r=s*0.22;
+ctx.fillStyle='#1d6f42';ctx.beginPath();ctx.roundRect(0,0,s,s,r);ctx.fill();
+const glow=ctx.createRadialGradient(s*.5,s*.15,0,s*.5,s*.5,s*.7);
+glow.addColorStop(0,'rgba(255,255,255,0.12)');glow.addColorStop(1,'rgba(0,0,0,0)');
+ctx.fillStyle=glow;ctx.beginPath();ctx.roundRect(0,0,s,s,r);ctx.fill();
+ctx.strokeStyle='#fff';ctx.fillStyle='#fff';ctx.lineWidth=1.8;ctx.lineCap='round';ctx.lineJoin='round';
+const p=s*.18,w=s-p*2,h=s-p*2;
+ctx.beginPath();ctx.roundRect(p,p+h*.12,w,h*.82,2);ctx.stroke();
+const cw=w*.45,ch=h*.18,cx=s/2-cw/2,cy=p;
+ctx.beginPath();ctx.roundRect(cx,cy,cw,ch,2);ctx.stroke();
+ctx.lineWidth=1.4;
+ctx.beginPath();
+ctx.moveTo(p+w*.2,p+h*.42);ctx.lineTo(p+w*.8,p+h*.42);
+ctx.moveTo(p+w*.2,p+h*.58);ctx.lineTo(p+w*.72,p+h*.58);
+ctx.stroke();
+const bx=p+w*.72,by=p+h*.68,br=s*.14;
+ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(bx,by,br+1.5,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#fff';ctx.font=`bold ${Math.round(s*.18)}px system-ui`;
+ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('A',bx,by+0.5);
+document.body.appendChild(canvas);
+</script></body></html>
