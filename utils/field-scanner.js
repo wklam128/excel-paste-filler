@@ -25,6 +25,26 @@
   // Excludes the document body itself and elements that are read-only.
   const CE_SELECTOR = '[contenteditable="true"], [contenteditable=""]';
 
+  // CSS selectors for custom dropdown wrappers (Ant Design, Element UI, etc.).
+  const CUSTOM_DROP_SELECTOR = [
+    '.ant-select',
+    '.el-select',
+    '.v-select',
+    '.multiselect',
+    '.select2-container',
+    '.chosen-container',
+    '[role="combobox"][aria-haspopup]',
+  ].join(', ');
+
+  // CSS selectors for custom date picker wrappers.
+  const DATE_PICKER_SELECTOR = [
+    '.ant-calendar-picker',
+    '.ant-picker',
+    '.el-date-editor',
+    '.el-date-picker',
+    '[data-datepicker]',
+  ].join(', ');
+
   /**
    * Scan the document and return all fillable fields sorted visually
    * (top-to-bottom, left-to-right — critical for table columns).
@@ -58,6 +78,28 @@
       results.push(buildFieldInfo(el));
     });
 
+    // Collect custom dropdown wrappers (Ant Design, Element UI, v-select, etc.).
+    document.querySelectorAll(CUSTOM_DROP_SELECTOR).forEach((el) => {
+      if (el.closest('#epf-root, #eff-root')) return;
+      if (!isVisible(el)) return;
+      if (el.parentElement?.closest(CUSTOM_DROP_SELECTOR)) return;
+      const key = uniqueKey(el);
+      if (seen.has(key)) return;
+      seen.add(key);
+      results.push(buildFieldInfo(el));
+    });
+
+    // Collect custom date picker wrappers.
+    document.querySelectorAll(DATE_PICKER_SELECTOR).forEach((el) => {
+      if (el.closest('#epf-root, #eff-root')) return;
+      if (!isVisible(el)) return;
+      if (el.parentElement?.closest(DATE_PICKER_SELECTOR)) return;
+      const key = uniqueKey(el);
+      if (seen.has(key)) return;
+      seen.add(key);
+      results.push(buildFieldInfo(el));
+    });
+
     // Sort visually: top→bottom, then left→right within the same row.
     // A 10 px tolerance groups elements on the same visual row together.
     results.sort((a, b) => {
@@ -79,7 +121,12 @@
   function buildFieldInfo(el) {
     const tag             = el.tagName.toLowerCase();
     const isContentEdit   = el.isContentEditable && tag !== 'input' && tag !== 'textarea' && tag !== 'select';
-    const type            = isContentEdit ? 'contenteditable' : (el.getAttribute('type') || tag).toLowerCase();
+    const isCustomDrop    = !isContentEdit && el.matches?.(CUSTOM_DROP_SELECTOR);
+    const isDatePick      = !isContentEdit && !isCustomDrop && el.matches?.(DATE_PICKER_SELECTOR);
+    const type            = isDatePick    ? 'date-picker'
+                          : isCustomDrop  ? 'custom-dropdown'
+                          : isContentEdit ? 'contenteditable'
+                          : (el.getAttribute('type') || tag).toLowerCase();
 
     return {
       element:        el,

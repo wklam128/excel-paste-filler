@@ -22,10 +22,13 @@
   // ── Config ───────────────────────────────────────────────────────────────
 
   let config = {
-    urlPatterns:     ['*'],
-    showToast:       true,
-    highlightFields: true,
-    skipEmptyCells:  false,
+    urlPatterns:        ['*'],
+    showToast:          true,
+    highlightFields:    true,
+    skipEmptyCells:     false,
+    copyEnabled:        true,
+    copyWithFormatting: false,
+    copyFmtStyles: { bg: true, color: true, font: true, align: true, size: false, border: false },
   };
 
   // Track the element the user last right-clicked.
@@ -34,9 +37,16 @@
   let _rightClickTarget = null;
   document.addEventListener('contextmenu', e => { _rightClickTarget = e.target; }, true);
 
+  let _pageActive = false;
+  let _lastTSV    = null;   // raw TSV from the most recent paste, for history
+  // Expose for other IIFEs in this file (e.g. translation section).
+  window.__EPF_PAGE_ACTIVE__ = false;
+
   loadConfig().then(cfg => {
     config = cfg;
-    if (urlMatches(config.urlPatterns, location.href)) attach();
+    _pageActive = urlMatches(config.urlPatterns, location.href);
+    window.__EPF_PAGE_ACTIVE__ = _pageActive;
+    if (_pageActive) attach();
   });
 
   // ── Attach listeners ─────────────────────────────────────────────────────
@@ -58,10 +68,21 @@
     if (!isFillable(e.target)) return;
     const text = e.clipboardData?.getData('text/plain');
     if (!text) return;
+    _lastTSV = text;
     const grid = parseTSV(text);
-    if (!grid.length || (grid.length === 1 && grid[0].length <= 1)) return; // single cell → browser
+    if (!grid.length) return;
+    const singleCell = grid.length === 1 && grid[0].length <= 1;
+    if (singleCell && !isCustomDropdown(e.target) && !isDatePicker(e.target)) return;
     e.preventDefault();
     e.stopPropagation();
+    if (singleCell && isDatePicker(e.target)) {
+      writeDatePicker(e.target, grid[0][0]);
+      return;
+    }
+    if (singleCell && isCustomDropdown(e.target)) {
+      writeCustomDropdown(e.target, grid[0][0]);
+      return;
+    }
     fillFrom(e.target, grid);
   }
 
@@ -72,10 +93,19 @@
     const target = e.target;
     navigator.clipboard.readText().then(text => {
       if (!text) return;
+      _lastTSV = text;
       const grid = parseTSV(text);
-      if (!grid.length || (grid.length === 1 && grid[0].length <= 1)) return;
+      if (!grid.length) return;
+      const singleCell = grid.length === 1 && grid[0].length <= 1;
+      if (singleCell && !isCustomDropdown(target) && !isDatePicker(target)) return;
       _keyguard = true;
-      fillFrom(target, grid);
+      if (singleCell && isDatePicker(target)) {
+        writeDatePicker(target, grid[0][0]);
+      } else if (singleCell && isCustomDropdown(target)) {
+        writeCustomDropdown(target, grid[0][0]);
+      } else {
+        fillFrom(target, grid);
+      }
       setTimeout(() => { _keyguard = false; }, 80);
     }).catch(() => {});
   }
@@ -84,6 +114,7 @@
     if (_keyguard) return;
     const text = e.clipboardData?.getData('text/plain');
     if (!text) return;
+    _lastTSV = text;
     const grid = parseTSV(text);
     if (!grid.length || (grid.length === 1 && grid[0].length <= 1)) return;
     e.preventDefault();
@@ -163,7 +194,7 @@
 
         if (config.highlightFields) EFF_Autofill.highlightElement(el, '2px solid #f59e0b');
 
-        const ok = writeIntoField(el, val);
+        const ok = await writeIntoField(el, val);
         if (ok) {
           if (config.highlightFields) EFF_Autofill.highlightElement(el, '2px solid #22c55e');
           totalFilled++;
@@ -185,7 +216,7 @@
         totalFilled < totalCells ? 'warn' : 'ok'
       );
     }
-    recordHistory(totalFilled, totalCells, 'table');
+    recordHistory(totalFilled, totalCells, 'table', _lastTSV);
   }
 
   // ── Cell activation ───────────────────────────────────────────────────────
@@ -209,10 +240,28 @@
   function waitForWritable(cell, timeoutMs) {
     const inputSel = 'input:not([type=hidden]):not([type=submit]):not([type=button]):not([disabled]),'
                    + 'textarea:not([disabled]),select:not([disabled])';
+    const customDropSel = '[role="combobox"],[aria-haspopup="listbox"],'
+                        + '.el-select,.ant-select,.v-select,.multiselect,'
+                        + '.select2-container,.chosen-container';
+    const datePickerSel = '.ant-calendar-picker,.ant-picker,.el-date-editor,.el-date-picker,[data-datepicker]';
+
+    const findEl = () => {
+      const visible = findVisible(cell, inputSel);
+      if (visible) return visible;
+      if (cell.isContentEditable) return cell;
+      // Date picker wrappers
+      if (cell.matches?.(datePickerSel) && isVisible(cell)) return cell;
+      const dp = cell.querySelector(datePickerSel);
+      if (dp && isVisible(dp)) return dp;
+      // Custom dropdown wrappers
+      if (cell.matches?.(customDropSel) && isVisible(cell)) return cell;
+      const drop = cell.querySelector(customDropSel);
+      if (drop && isVisible(drop)) return drop;
+      return null;
+    };
 
     return new Promise(resolve => {
-      // Already there?
-      const immediate = findVisible(cell, inputSel) || (cell.isContentEditable ? cell : null);
+      const immediate = findEl();
       if (immediate) return resolve(immediate);
 
       let done = false;
@@ -225,27 +274,346 @@
       }
 
       const observer = new MutationObserver(() => {
-        const el = findVisible(cell, inputSel);
+        const el = findEl();
         if (el) finish(el);
       });
       observer.observe(cell, { childList: true, subtree: true, attributes: true,
-        attributeFilter: ['contenteditable','type','disabled'] });
+        attributeFilter: ['contenteditable','type','disabled','role','aria-haspopup'] });
 
-      const poll  = setInterval(() => {
-        const el = findVisible(cell, inputSel) || (cell.isContentEditable ? cell : null);
-        if (el) finish(el);
-      }, 30);
+      const poll  = setInterval(() => { const el = findEl(); if (el) finish(el); }, 30);
 
-      const timer = setTimeout(() => finish(cell.isContentEditable ? cell : null), timeoutMs);
+      const timer = setTimeout(() => finish(findEl()), timeoutMs);
     });
+  }
+
+  // ── Custom dropdown helpers ───────────────────────────────────────────────
+
+  function isCustomDropdown(el) {
+    return !!(el.closest(
+      '[role="combobox"], [aria-haspopup="listbox"], ' +
+      '.el-select, .ant-select, .v-select, .multiselect, ' +
+      '.select2-container, .chosen-container'
+    ));
+  }
+
+  function waitForOptionsChange(prevTexts, timeoutMs) {
+    const sel = '[role="option"], .ant-select-dropdown-menu-item, .ant-select-item-option, ' +
+                '.el-select-dropdown__item, .v-select__option, .multiselect__option, ' +
+                '.select2-results__option, .chosen-results li';
+    return new Promise(resolve => {
+      const changed = () => {
+        const opts = Array.from(document.querySelectorAll(sel)).filter(isVisible);
+        return opts.length && opts.some(o => !prevTexts.has(o.textContent.trim()));
+      };
+      if (changed()) return resolve();
+      let done = false;
+      function finish() { if (done) return; done = true; observer.disconnect(); clearTimeout(timer); resolve(); }
+      const observer = new MutationObserver(() => { if (changed()) finish(); });
+      observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+      const timer = setTimeout(finish, timeoutMs);
+    });
+  }
+
+  function waitForOptions(timeoutMs) {
+    const sel = '[role="option"], ' +
+                '.ant-select-dropdown-menu-item, ' +   // Ant Design v3
+                '.ant-select-item-option, ' +           // Ant Design v4/v5
+                '.el-select-dropdown__item, ' +
+                '.v-select__option, .multiselect__option, ' +
+                '.select2-results__option, .chosen-results li';
+    return new Promise(resolve => {
+      const check = () => {
+        const opts = Array.from(document.querySelectorAll(sel)).filter(isVisible);
+        return opts.length ? opts : null;
+      };
+      const immediate = check();
+      if (immediate) return resolve(immediate);
+
+      let done = false;
+      function finish(result) {
+        if (done) return; done = true;
+        observer.disconnect();
+        clearTimeout(timer);
+        resolve(result);
+      }
+      const observer = new MutationObserver(() => { const o = check(); if (o) finish(o); });
+      observer.observe(document.body, { childList: true, subtree: true });
+      const timer = setTimeout(() => finish([]), timeoutMs);
+    });
+  }
+
+  async function writeCustomDropdown(el, value) {
+    const lv = value.toLowerCase().trim();
+
+    // Blank value → clear the field without opening the dropdown.
+    if (lv === '') {
+      // Try the Ant Design / custom clear button first.
+      const clearBtn = el.querySelector(
+        '.ant-select-selection__clear, .el-select__close, .multiselect__clear, ' +
+        '[title="Clear"], [aria-label="clear"]'
+      );
+      if (clearBtn && isVisible(clearBtn)) {
+        clearBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+        clearBtn.dispatchEvent(new MouseEvent('mouseup',   { bubbles: true, cancelable: true }));
+        clearBtn.dispatchEvent(new MouseEvent('click',     { bubbles: true, cancelable: true }));
+        return true;
+      }
+      // Fallback: if there's a search input, clear its value and fire events so
+      // the framework resets the selection.
+      const inp = el.querySelector('input');
+      if (inp) {
+        inp.focus();
+        inp.select();
+        document.execCommand('insertText', false, '');
+        inp.dispatchEvent(new Event('input',  { bubbles: true }));
+        inp.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      return true;
+    }
+
+    // Ensure the dropdown is open.
+    let options = await waitForOptions(80);
+    if (!options.length) {
+      const wrapper = el.closest(
+        '[role="combobox"], [aria-haspopup="listbox"], ' +
+        '.ant-select-selection, .el-select, .ant-select, ' +
+        '.v-select, .multiselect, .select2-container, .chosen-container'
+      ) || el;
+      ['mousedown','mouseup','click'].forEach(name =>
+        wrapper.dispatchEvent(new MouseEvent(name, { bubbles: true, cancelable: true }))
+      );
+      el.focus?.();
+      options = await waitForOptions(1500);
+      if (!options.length) return false;
+    }
+
+    // Find the search input (the element itself, or a child input).
+    const searchInput = (el.tagName.toLowerCase() === 'input' ? el : null)
+                     || el.querySelector('input.ant-select-search__field, input[class*="search"]');
+
+    const notDisabled = '.ant-select-dropdown-menu-item-disabled, .ant-select-item-option-disabled';
+    const bestMatch = (opts) => {
+      const t = opts.filter(o => !o.matches?.(notDisabled));
+      return t.find(o => o.textContent.trim().toLowerCase() === lv)
+          || t.find(o => o.textContent.trim().toLowerCase().includes(lv))
+          || t.find(o => lv.includes(o.textContent.trim().toLowerCase()))
+          || null;
+    };
+
+    // Check if the answer is already in the current list.
+    let opt = bestMatch(options);
+
+    if (!opt && searchInput) {
+      // Type via execCommand so React's synthetic event system picks it up.
+      searchInput.focus();
+      searchInput.select();
+      document.execCommand('insertText', false, value);
+
+      // Wait for the option list to change, then pick the best match.
+      const prevTexts = new Set(options.map(o => o.textContent.trim()));
+      await waitForOptionsChange(prevTexts, 2000);
+      options = await waitForOptions(200);
+      opt = bestMatch(options);
+      if (!opt && lv !== '') {
+        const remaining = options.filter(o => !o.matches?.(notDisabled));
+        if (remaining.length === 1) opt = remaining[0];
+      }
+    }
+
+    if (!opt) {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+      return false;
+    }
+
+    opt.scrollIntoView({ block: 'nearest' });
+    await tick();
+    ['mouseenter','mouseover','mousedown','mouseup','click'].forEach(name =>
+      opt.dispatchEvent(new MouseEvent(name, { bubbles: true, cancelable: true, view: window }))
+    );
+    // Give the framework time to close the dropdown before the next cell opens.
+    await new Promise(r => setTimeout(r, 120));
+    return true;
+  }
+
+  // ── Date helpers ──────────────────────────────────────────────────────────
+
+  function parseDate(str) {
+    const s = str.trim();
+    // YYYY-MM-DD
+    let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (m) return { year: +m[1], month: +m[2], day: +m[3] };
+    // DD/MM/YYYY
+    m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) return { year: +m[3], month: +m[2], day: +m[1] };
+    return null;
+  }
+
+  function toISODate(parsed) {
+    const { year, month, day } = parsed;
+    return `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  }
+
+  function isDatePicker(el) {
+    const type = (el.getAttribute('type') || '').toLowerCase();
+    if (el.tagName.toLowerCase() === 'input' && type === 'date') return true;
+    return !!(el.closest(
+      '.ant-calendar-picker, .ant-picker, ' +
+      '.el-date-editor, .el-date-picker, ' +
+      '.datepicker, [data-datepicker]'
+    ));
+  }
+
+  function formatDateForPicker(parsed, placeholder) {
+    const ph = (placeholder || '').toUpperCase();
+    const { year, month, day } = parsed;
+    const dd   = String(day).padStart(2, '0');
+    const mm   = String(month).padStart(2, '0');
+    // Detect format from placeholder (e.g. "DD/MM/YYYY", "YYYY-MM-DD")
+    if (/^D/.test(ph)) return `${dd}/${mm}/${year}`;       // DD/MM/YYYY
+    if (/^MM\/DD/.test(ph)) return `${mm}/${dd}/${year}`;  // MM/DD/YYYY
+    return `${year}-${mm}-${dd}`;                           // default: YYYY-MM-DD
+  }
+
+  async function writeDatePicker(el, value) {
+    if (!value.trim()) return true;
+
+    const parsed = parseDate(value);
+    if (!parsed) return false;
+
+    // Yield to let the browser finish the current paste/keydown event before
+    // we dispatch synthetic mouse events to open the calendar.
+    await new Promise(r => setTimeout(r, 50));
+
+    // Native <input type="date">
+    const tag  = el.tagName.toLowerCase();
+    const type = (el.getAttribute('type') || '').toLowerCase();
+    if (tag === 'input' && type === 'date') {
+      const iso    = toISODate(parsed);
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+      setter ? setter.call(el, iso) : (el.value = iso);
+      el.dispatchEvent(new Event('input',  { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+      return true;
+    }
+
+    // Custom date picker — find the clickable trigger inside the wrapper.
+    const wrapper = el.closest(
+      '.ant-calendar-picker, .ant-picker, .el-date-editor, .el-date-picker, [data-datepicker]'
+    ) || el;
+
+    // Step 1: click the wrapper itself to open the calendar popup.
+    // Ant Design v3 attaches the open handler on the outer .ant-calendar-picker,
+    // not on the inner input/span — so we click the wrapper, then the icon as fallback.
+    ['mousedown','mouseup','click'].forEach(name =>
+      wrapper.dispatchEvent(new MouseEvent(name, { bubbles: true, cancelable: true }))
+    );
+    // Also click the calendar icon in case the wrapper click isn't enough.
+    const icon = wrapper.querySelector('.ant-calendar-picker-icon, .ant-picker-suffix');
+    if (icon) {
+      ['mousedown','mouseup','click'].forEach(name =>
+        icon.dispatchEvent(new MouseEvent(name, { bubbles: true, cancelable: true }))
+      );
+    }
+    wrapper.focus?.();
+
+    // Step 2: wait for the calendar panel to appear in the DOM (up to 1.5 s).
+    const calPanel = await waitForElement(
+      '.ant-calendar, ' +
+      '.ant-picker-dropdown:not(.ant-picker-dropdown-hidden), ' +
+      '.el-date-picker__popper, .el-picker-panel',
+      1500
+    );
+    if (!calPanel) return false;
+
+    // Step 3: navigate to the correct month/year, then click the date cell.
+    const ok = await clickCalendarDate(calPanel, parsed);
+
+    // Step 4: close calendar if still open.
+    if (document.contains(calPanel)) {
+      document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+      await new Promise(r => setTimeout(r, 80));
+    }
+
+    return ok;
+  }
+
+  // Full month names for building Ant Design v3 cell titles ("April 17, 2026").
+  const MONTH_NAMES = ['January','February','March','April','May','June',
+                       'July','August','September','October','November','December'];
+  const MONTH_SHORT = ['jan','feb','mar','apr','may','jun',
+                       'jul','aug','sep','oct','nov','dec'];
+
+  async function clickCalendarDate(panel, { year, month, day }) {
+    const iso      = toISODate({ year, month, day });
+    // Ant Design v3 uses "April 17, 2026"; v4/v5 uses "2026-04-17".
+    const titleV3  = `${MONTH_NAMES[month - 1]} ${day}, ${year}`;
+
+    for (let attempts = 0; attempts < 24; attempts++) {
+      const cell = panel.querySelector(
+        `[title="${titleV3}"], [title="${iso}"], [data-date="${iso}"]`
+      );
+      if (cell) {
+        // Click the inner date div if present (Ant Design v3 uses <div class="ant-calendar-date">).
+        const inner = cell.querySelector('.ant-calendar-date, .ant-picker-cell-inner') || cell;
+        ['mousedown','mouseup','click'].forEach(name =>
+          inner.dispatchEvent(new MouseEvent(name, { bubbles: true, cancelable: true }))
+        );
+        return true;
+      }
+
+      const shownYear  = readCalendarYear(panel);
+      const shownMonth = readCalendarMonth(panel);
+      if (shownYear === null || shownMonth === null) break;
+
+      const diff = (year * 12 + month - 1) - (shownYear * 12 + shownMonth - 1);
+      if (diff === 0) break; // correct month shown but cell not found
+
+      const btnSel = diff > 0
+        ? '.ant-calendar-next-month-btn, .ant-picker-next-btn, .el-date-picker__next-btn'
+        : '.ant-calendar-prev-month-btn, .ant-picker-prev-btn, .el-date-picker__prev-btn';
+      const btn = panel.querySelector(btnSel);
+      if (!btn) break;
+      btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+      await new Promise(r => setTimeout(r, 150));
+    }
+    return false;
+  }
+
+  function readCalendarYear(panel) {
+    const el = panel.querySelector('.ant-calendar-year-select, .ant-picker-year-btn');
+    if (!el) return null;
+    const m = el.textContent.match(/\d{4}/);
+    return m ? +m[0] : null;
+  }
+
+  function readCalendarMonth(panel) {
+    const el = panel.querySelector('.ant-calendar-month-select, .ant-picker-month-btn');
+    if (!el) return null;
+    const text = el.textContent.toLowerCase().trim();
+    // Match abbreviated month name e.g. "Apr"
+    const idx = MONTH_SHORT.findIndex(m => text.startsWith(m));
+    if (idx !== -1) return idx + 1;
+    // Numeric month fallback
+    const m = text.match(/\b(\d{1,2})\b/);
+    return m ? +m[1] : null;
   }
 
   // ── Write value ───────────────────────────────────────────────────────────
 
-  function writeIntoField(el, rawValue) {
+  async function writeIntoField(el, rawValue) {
     const value = String(rawValue);
     const tag   = el.tagName.toLowerCase();
     const type  = (el.getAttribute('type') || '').toLowerCase();
+
+    // Date picker (native or custom framework).
+    if (isDatePicker(el)) {
+      return writeDatePicker(el, value);
+    }
+
+    // Custom dropdown (Vue/React/Ant Design etc.) — must click option in the list.
+    if (isCustomDropdown(el)) {
+      return writeCustomDropdown(el, value);
+    }
 
     try {
       if (tag === 'select') {
@@ -316,7 +684,7 @@
 
   // ── Scanned fill (flat, for non-table forms) ──────────────────────────────
 
-  function fillScanned(startEl, grid) {
+  async function fillScanned(startEl, grid) {
     // Flatten the 2D grid into one ordered list for regular form fields.
     const values = grid.flat();
     const fields = EFF_FieldScanner.scanFields();
@@ -330,20 +698,22 @@
     if (startIdx === -1) startIdx = 0;
 
     let filled = 0, pointer = startIdx;
-    values.forEach(val => {
-      if (config.skipEmptyCells && val.trim() === '') return;
-      if (pointer >= fields.length) return;
+    for (const val of values) {
+      if (config.skipEmptyCells && val.trim() === '') continue;
+      if (pointer >= fields.length) break;
       const fi = fields[pointer++];
-      if (!document.contains(fi.element)) return;
+      if (!document.contains(fi.element)) continue;
       if (config.highlightFields) EFF_Autofill.highlightElement(fi.element, '2px solid #f59e0b');
-      if (writeIntoField(fi.element, val)) {
+      const ok = await writeIntoField(fi.element, val);
+      if (ok) {
         if (config.highlightFields) EFF_Autofill.highlightElement(fi.element, '2px solid #22c55e');
         filled++;
       }
-    });
+      await tick();
+    }
 
     if (config.showToast) showToast(`Filled ${filled} field${filled !== 1 ? 's' : ''}`, 'ok');
-    recordHistory(filled, values.length, 'form');
+    recordHistory(filled, values.length, 'form', _lastTSV);
   }
 
   // ── TSV parser → 2D array ─────────────────────────────────────────────────
@@ -380,6 +750,26 @@
 
   function tick() { return new Promise(r => setTimeout(r, 0)); }
 
+  function waitForElement(selector, timeoutMs) {
+    return new Promise(resolve => {
+      const found = document.querySelector(selector);
+      if (found) return resolve(found);
+      let done = false;
+      function finish(el) {
+        if (done) return; done = true;
+        observer.disconnect();
+        clearTimeout(timer);
+        resolve(el);
+      }
+      const observer = new MutationObserver(() => {
+        const el = document.querySelector(selector);
+        if (el) finish(el);
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+      const timer = setTimeout(() => finish(null), timeoutMs);
+    });
+  }
+
   function isFillable(el) {
     if (!el) return false;
     if (el.isContentEditable && el !== document.body) return true;
@@ -387,6 +777,10 @@
     const type = (el.getAttribute?.('type') || '').toLowerCase();
     if (tag === 'textarea' || tag === 'select') return true;
     if (tag === 'input') return !['hidden','submit','button','reset','image'].includes(type) && !el.disabled;
+    // Custom dropdown wrappers (Element UI, Ant Design, v-select, etc.)
+    if (isCustomDropdown(el)) return true;
+    // Date picker wrappers
+    if (isDatePicker(el)) return true;
     return false;
   }
 
@@ -408,20 +802,53 @@
 
   // ── Paste History ─────────────────────────────────────────────────────────
 
-  function recordHistory(filled, total, mode) {
+  async function compressTSV(text) {
+    try {
+      const enc    = new TextEncoder().encode(text);
+      const cs     = new CompressionStream('deflate-raw');
+      const writer = cs.writable.getWriter();
+      writer.write(enc);
+      writer.close();
+      const chunks = [];
+      const reader = cs.readable.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+      }
+      const total = chunks.reduce((n, c) => n + c.length, 0);
+      const out   = new Uint8Array(total);
+      let   off   = 0;
+      for (const c of chunks) { out.set(c, off); off += c.length; }
+      return btoa(String.fromCharCode(...out));
+    } catch { return null; }
+  }
+
+  function buildPreview(rawTSV) {
+    if (!rawTSV) return '';
+    const firstRow = rawTSV.split('\n')[0] || '';
+    const cells    = firstRow.split('\t').map(c => c.trim()).filter(Boolean);
+    const preview  = cells.slice(0, 4).join(' · ');
+    return preview.length > 60 ? preview.slice(0, 58) + '…' : preview;
+  }
+
+  async function recordHistory(filled, total, mode, rawTSV) {
+    const compressed = rawTSV ? await compressTSV(rawTSV) : null;
     const entry = {
-      ts:     Date.now(),
-      url:    location.href,
-      host:   location.hostname || location.href,
-      title:  document.title   || location.hostname,
+      ts:      Date.now(),
+      url:     location.href,
+      host:    location.hostname || location.href,
+      title:   document.title   || location.hostname,
       filled,
       total,
       mode,
+      preview: buildPreview(rawTSV),
+      ...(compressed ? { z: compressed } : {}),
     };
     chrome.storage.local.get('epf_paste_history', (data) => {
       const hist = data.epf_paste_history || [];
       hist.unshift(entry);
-      if (hist.length > 50) hist.length = 50;
+      if (hist.length > 10) hist.length = 10;
       chrome.storage.local.set({ epf_paste_history: hist });
     });
   }
@@ -461,13 +888,276 @@
     if (msg.type === 'EPF_GET_STATE') {
       respond({ fieldCount: EFF_FieldScanner.scanFields().length });
     }
+    if (msg.type === 'EPF_WRITE_CLIPBOARD') {
+      navigator.clipboard.writeText(msg.text)
+        .then(() => respond({ ok: true }))
+        .catch(() => respond({ ok: false }));
+      return true;
+    }
 
     if (msg.type === 'EPF_COPY_TABLE') {
+      if (!_pageActive) {
+        showToast('Addon is disabled on this page. Add it in the extension popup.', 'warn');
+        return true;
+      }
       copyTableAtTarget(_rightClickTarget);
+    }
+
+    // Update in-memory config so copyWithFormatting etc. take effect without refresh.
+    if (msg.type === 'SAVE_CONFIG' && msg.config) {
+      config = { ...config, ...msg.config };
     }
 
     return true;
   });
+
+  // ── VXE-table copy ───────────────────────────────────────────────────────
+
+  /**
+   * VXE-table splits fixed columns into a separate DOM panel. Each cell carries
+   * data-colid and each row carries data-rowid, so we can merge all panels by
+   * those keys instead of relying on positional DOM order.
+   */
+  // Extract text from a VXE cell using textContent (not innerText) so
+  // display:none elements (fixed--hidden panels) are still readable.
+  function vxeCellText(el) {
+    return (el.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  // Decorative children to strip before reading header label text:
+  // sort arrows, filter triggers, resize handles, icons, SVGs.
+  const HEADER_STRIP_SEL = [
+    'svg',
+    'button',
+    '[aria-hidden="true"]',
+    '[class*="sorter"]',
+    '[class*="sort-icon"]',
+    '[class*="filter"]',
+    '[class*="resize"]',
+    '[class*="drag"]',
+    '[class*="caret"]',
+    '[class*="arrow"]',
+    'i[class*="icon"]',
+    'span[class*="icon"]',
+  ].join(',');
+
+  /**
+   * Extract the visible label from a header cell, stripping sort/filter icons
+   * and other decorative children that would otherwise pollute the text.
+   */
+  function getHeaderText(cell) {
+    // Try framework-specific label containers first (Ant Design, Element UI, VXE).
+    const labelEl = cell.querySelector(
+      '.ant-table-column-title, .el-table__cell-text, .vxe-cell--title, .column-title'
+    );
+    if (labelEl) return (labelEl.textContent || '').replace(/\s+/g, ' ').trim();
+
+    // General fallback: clone, strip decorative elements, read textContent.
+    const clone = cell.cloneNode(true);
+    clone.querySelectorAll(HEADER_STRIP_SEL).forEach(el => el.remove());
+    return (clone.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function buildVxeGrid(vxeContainer) {
+    // 1. Build ordered column list from headers (deduplicated by data-colid).
+    //    Prefer non-empty header text — the fixed-left panel has visible th
+    //    elements while the main panel marks them fixed--hidden (display:none),
+    //    so innerText returns '' for the main panel headers.
+    const colOrder = [];
+    const colIndex = new Map(); // colid → index in colOrder
+
+    vxeContainer.querySelectorAll('thead th[data-colid]').forEach(th => {
+      const colid = th.getAttribute('data-colid');
+      if (!colid) return;
+      const text = getHeaderText(th);
+      if (!colIndex.has(colid)) {
+        colIndex.set(colid, colOrder.length);
+        colOrder.push({ colid, header: text });
+      } else if (text && !colOrder[colIndex.get(colid)].header) {
+        // Update with non-empty text from a later panel (e.g. fixed-left header).
+        colOrder[colIndex.get(colid)].header = text;
+      }
+    });
+    if (!colOrder.length) return [];
+
+    // 2. Collect cell values from every body panel keyed by rowid → colid.
+    //    Non-empty value wins so fixed-left real data overwrites main-panel
+    //    empty placeholders.
+    const rowOrder = [];
+    const rowMap   = new Map();
+
+    vxeContainer.querySelectorAll('tbody tr[data-rowid]').forEach(tr => {
+      const rowid = tr.getAttribute('data-rowid');
+      if (!rowMap.has(rowid)) {
+        rowMap.set(rowid, {});
+        rowOrder.push(rowid);
+      }
+      const cellMap = rowMap.get(rowid);
+      tr.querySelectorAll('td[data-colid]').forEach(td => {
+        const colid = td.getAttribute('data-colid');
+        const text  = vxeCellText(td);
+        if (text) cellMap[colid] = text;
+      });
+    });
+
+    if (!rowOrder.length) return [];
+
+    // 3. Build grid: header row + data rows.
+    const header   = colOrder.map(c => c.header);
+    const dataRows = rowOrder.map(rowid => {
+      const cellMap = rowMap.get(rowid);
+      return colOrder.map(c => cellMap[c.colid] ?? '');
+    });
+
+    return [header, ...dataRows];
+  }
+
+  /**
+   * Build the HTML clipboard string for a VXE grid.
+   * When copyWithFormatting is on, reads computed styles from the live DOM
+   * cells and applies them inline so colours survive the paste into Excel/Word.
+   */
+  function buildVxeGridHTML(vxeContainer, fullGrid) {
+    if (!config.copyWithFormatting) {
+      return `<html><body><table>${
+        fullGrid.map(r => `<tr>${r.map(c => `<td>${escapeHtml(c)}</td>`).join('')}</tr>`).join('')
+      }</table></body></html>`;
+    }
+
+    // Map rowid → colid → computed style string.
+    const styleGrid = new Map(); // rowid → Map<colid, styleStr>
+    const headerStyles = new Map(); // colid → styleStr
+
+    vxeContainer.querySelectorAll('thead th[data-colid]').forEach(th => {
+      const colid = th.getAttribute('data-colid');
+      if (!colid || headerStyles.has(colid)) return;
+      const s = cellStyleStr(th);
+      if (s) headerStyles.set(colid, s);
+    });
+
+    vxeContainer.querySelectorAll('tbody tr[data-rowid]').forEach(tr => {
+      const rowid = tr.getAttribute('data-rowid');
+      if (!styleGrid.has(rowid)) styleGrid.set(rowid, new Map());
+      const map = styleGrid.get(rowid);
+      tr.querySelectorAll('td[data-colid]').forEach(td => {
+        const colid = td.getAttribute('data-colid');
+        if (!map.has(colid)) {
+          const s = cellStyleStr(td);
+          if (s) map.set(colid, s);
+        }
+      });
+    });
+
+    // Rebuild colOrder from fullGrid header row (index = position in fullGrid).
+    // We need colids in the same order. Re-derive from vxeContainer.
+    const colOrder = [];
+    const seen = new Set();
+    vxeContainer.querySelectorAll('thead th[data-colid]').forEach(th => {
+      const colid = th.getAttribute('data-colid');
+      if (colid && !seen.has(colid)) { seen.add(colid); colOrder.push(colid); }
+    });
+
+    const rowOrder = [];
+    const rowSeen = new Set();
+    vxeContainer.querySelectorAll('tbody tr[data-rowid]').forEach(tr => {
+      const rowid = tr.getAttribute('data-rowid');
+      if (rowid && !rowSeen.has(rowid)) { rowSeen.add(rowid); rowOrder.push(rowid); }
+    });
+
+    const headerRow = fullGrid[0]
+      .map((text, ci) => {
+        const colid = colOrder[ci];
+        const s = colid ? (headerStyles.get(colid) || '') : '';
+        const styleAttr = s ? ` style="${s}"` : '';
+        return `<th${styleAttr}>${escapeHtml(text)}</th>`;
+      })
+      .join('');
+
+    const bodyRows = fullGrid.slice(1).map((row, ri) => {
+      const rowid = rowOrder[ri];
+      const rowStyleMap = rowid ? (styleGrid.get(rowid) || new Map()) : new Map();
+      const cells = row.map((text, ci) => {
+        const colid = colOrder[ci];
+        const s = colid ? (rowStyleMap.get(colid) || '') : '';
+        const styleAttr = s ? ` style="${s}"` : '';
+        return `<td${styleAttr}>${escapeHtml(text)}</td>`;
+      }).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('');
+
+    return `<html><body><table><thead><tr>${headerRow}</tr></thead><tbody>${bodyRows}</tbody></table></body></html>`;
+  }
+
+  function cellStyleStr(el) {
+    const cs  = window.getComputedStyle(el);
+    const fmt = config.copyFmtStyles || {};
+    const parts = [];
+
+    if (fmt.bg) {
+      let v = cs.getPropertyValue('background-color');
+      if (isTransparent(v)) v = resolveBackground(el.parentElement) || v;
+      if (!isTransparent(v)) parts.push(`background-color:${v}`);
+    }
+
+    if (fmt.color) {
+      const v = cs.getPropertyValue('color');
+      parts.push(`color:${v}`);
+    }
+
+    if (fmt.font) {
+      const fw = cs.getPropertyValue('font-weight');
+      const fi = cs.getPropertyValue('font-style');
+      // Only carry bold if weight is visually bold (≥600). Weights 400–500 look
+      // normal on screen; passing them through makes Excel render cells as bold.
+      const fwNum = parseInt(fw, 10);
+      if (!isNaN(fwNum) && fwNum >= 600) parts.push(`font-weight:${fw}`);
+      else if (fw === 'bold') parts.push(`font-weight:bold`);
+      if (fi === 'italic' || fi === 'oblique') parts.push(`font-style:${fi}`);
+    }
+
+    if (fmt.align) {
+      const v = cs.getPropertyValue('text-align');
+      if (v !== 'start' && v !== 'left') parts.push(`text-align:${v}`);
+    }
+
+    if (fmt.size) {
+      const v = cs.getPropertyValue('font-size');
+      parts.push(`font-size:${v}`);
+    }
+
+    if (fmt.border) {
+      ['border-top', 'border-right', 'border-bottom', 'border-left'].forEach(side => {
+        const w = cs.getPropertyValue(`${side}-width`);
+        const s = cs.getPropertyValue(`${side}-style`);
+        const c = cs.getPropertyValue(`${side}-color`);
+        if (w && w !== '0px' && s && s !== 'none') parts.push(`${side}:${w} ${s} ${c}`);
+      });
+    }
+
+    return parts.join(';');
+  }
+
+  function isTransparent(v) {
+    return !v || v === 'transparent' || v === 'rgba(0, 0, 0, 0)';
+  }
+
+  /** Walk up DOM ancestors to find the first non-transparent background-color. */
+  function resolveBackground(el) {
+    while (el && el !== document.body) {
+      const v = window.getComputedStyle(el).getPropertyValue('background-color');
+      if (!isTransparent(v)) return v;
+      el = el.parentElement;
+    }
+    return null;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
 
   // ── Copy Table to Clipboard ─────────────────────────────────────────────
 
@@ -478,8 +1168,34 @@
    * Also copies text/html so apps that understand HTML tables get richer data.
    */
   async function copyTableAtTarget(target) {
+    if (!config.copyEnabled) {
+      showToast('Copy Table is disabled in Settings.', 'warn');
+      return;
+    }
     if (!target) {
       showToast('Right-click inside a table first.', 'warn');
+      return;
+    }
+
+    // ── VXE-table: fixed left columns live in a separate DOM panel ────────────
+    const vxeContainer = target.closest('.vxe-table');
+    if (vxeContainer) {
+      const fullGrid = buildVxeGrid(vxeContainer);
+      if (!fullGrid.length) { showToast('No data found in table.', 'warn'); return; }
+      const tsv  = gridToTSV(fullGrid);
+      const html = buildVxeGridHTML(vxeContainer, fullGrid);
+      flashTableHighlight(vxeContainer);
+      if (navigator.clipboard && window.ClipboardItem) {
+        const item = new ClipboardItem({
+          'text/plain': new Blob([tsv],  { type: 'text/plain' }),
+          'text/html':  new Blob([html], { type: 'text/html'  }),
+        });
+        navigator.clipboard.write([item])
+          .then(() => toastCopySuccess(fullGrid))
+          .catch(() => fallbackCopy(tsv, fullGrid));
+      } else {
+        fallbackCopy(tsv, fullGrid);
+      }
       return;
     }
 
@@ -543,7 +1259,7 @@
           // Capture cell data IMMEDIATELY while the row is still in the DOM.
           allRows.push(
             Array.from(tr.cells).map(cell => ({
-              text:    getCellText(cell),
+              text:    cell.tagName === 'TH' ? getHeaderText(cell) : getCellText(cell),
               colspan: Math.max(1, parseInt(cell.getAttribute('colspan')) || 1),
               rowspan: Math.max(1, parseInt(cell.getAttribute('rowspan')) || 1),
             }))
@@ -695,6 +1411,15 @@
    * Produce a clean HTML <table> string (for apps that accept text/html).
    */
   function tableToHTML(table, headerRows = []) {
+    // Capture computed styles before cloning (clone loses live style data).
+    const styleMap = new Map();
+    if (config.copyWithFormatting) {
+      table.querySelectorAll('td, th').forEach(cell => {
+        const s = cellStyleStr(cell);
+        if (s) styleMap.set(cell, s);
+      });
+    }
+
     const clone = table.cloneNode(true);
     clone.querySelectorAll('script, style').forEach(el => el.remove());
     clone.querySelectorAll('*').forEach(el => {
@@ -703,6 +1428,16 @@
         .forEach(a => el.removeAttribute(a.name));
     });
 
+    // Apply captured styles to cloned cells.
+    if (config.copyWithFormatting && styleMap.size) {
+      const origCells = Array.from(table.querySelectorAll('td, th'));
+      const cloneCells = Array.from(clone.querySelectorAll('td, th'));
+      origCells.forEach((orig, i) => {
+        const s = styleMap.get(orig);
+        if (s && cloneCells[i]) cloneCells[i].setAttribute('style', s);
+      });
+    }
+
     // Prepend detached header rows as a <thead> inside the cloned table.
     if (headerRows.length) {
       const thead = document.createElement('thead');
@@ -710,7 +1445,7 @@
         const row = document.createElement('tr');
         Array.from(tr.querySelectorAll('th, td, [role="columnheader"], [role="gridcell"]')).forEach(cell => {
           const th = document.createElement('th');
-          th.textContent = cell.innerText.trim();
+          th.textContent = getHeaderText(cell);
           row.appendChild(th);
         });
         thead.appendChild(row);
@@ -737,7 +1472,8 @@
         while (grid[rIdx][cIdx] !== undefined) cIdx++;
         const colspan = Math.max(1, parseInt(cell.getAttribute('colspan')) || 1);
         const rowspan = Math.max(1, parseInt(cell.getAttribute('rowspan')) || 1);
-        const text = getCellText(cell);
+        const isHeader = cell.tagName === 'TH' || cell.getAttribute('role') === 'columnheader';
+        const text = isHeader ? getHeaderText(cell) : getCellText(cell);
         for (let dr = 0; dr < rowspan; dr++) {
           for (let dc = 0; dc < colspan; dc++) {
             if (!grid[rIdx + dr]) grid[rIdx + dr] = [];
@@ -835,22 +1571,105 @@
   'use strict';
 
   const GTRANSLATE = 'https://translate.googleapis.com/translate_a/single';
-  const MIN_CHARS = 2;
-  const MAX_CHARS = 1500;
+  const MIN_CHARS  = 3;
+  const MAX_CHARS  = 1500;
+  // Short common words not worth translating (English UI noise).
+  const SKIP_WORDS = new Set(['the','and','for','are','but','not','you','all','can','had',
+    'her','was','one','our','out','day','get','has','him','his','how','its','may',
+    'new','now','own','say','she','too','use','who','yes','yet','no','ok','id']);
+
+  function shouldSkip(text) {
+    if (text.length < MIN_CHARS) return true;
+    // Single word with no spaces: skip if it's in the noise list.
+    if (!/\s/.test(text) && SKIP_WORDS.has(text.toLowerCase())) return true;
+    // Pure numbers / punctuation only.
+    if (/^[\d\s.,!?;:()\-–—"']+$/.test(text)) return true;
+    return false;
+  }
   const CACHE_KEY = 'epf_xlat_cache';
   const CACHE_MAX = 300;
 
-  // API codes and display labels for each target language.
+  // API codes, display labels, and BCP-47 speech codes for each target language.
   const LANG_META = {
-    en: { api: 'en',    label: 'EN' },
-    id: { api: 'id',    label: 'ID' },
-    vi: { api: 'vi',    label: 'VI' },
-    zh: { api: 'zh-CN', label: 'ZH' },
+    en: { api: 'en',    label: 'EN', speech: 'en-US' },
+    id: { api: 'id',    label: 'ID', speech: 'id-ID' },
+    vi: { api: 'vi',    label: 'VI', speech: 'vi-VN' },
+    zh: { api: 'zh-CN', label: 'ZH', speech: 'zh-CN' },
+    ko: { api: 'ko',    label: 'KO', speech: 'ko-KR' },
+    ja: { api: 'ja',    label: 'JA', speech: 'ja-JP' },
   };
 
-  let _enabled = true;
-  let _langs   = { en: false, id: true, vi: true, zh: false };
-  let _anchor  = { top: false, bottom: false, left: false, right: false };
+  // ── Speech synthesis ──────────────────────────────────────────────────────────
+
+  // Cache which speech langs are available (populated on first use).
+  let _voiceMap = null;
+
+  function getVoiceMap() {
+    if (_voiceMap) return _voiceMap;
+    _voiceMap = {};
+    const voices = speechSynthesis.getVoices();
+    for (const v of voices) {
+      const tag = v.lang.toLowerCase();
+      for (const [key, meta] of Object.entries(LANG_META)) {
+        if (!_voiceMap[key] && tag.startsWith(meta.speech.toLowerCase().slice(0, 2))) {
+          _voiceMap[key] = v;
+        }
+      }
+    }
+    return _voiceMap;
+  }
+
+  // Voices may load async — rebuild map when they arrive.
+  speechSynthesis.addEventListener('voiceschanged', () => { _voiceMap = null; });
+
+  function speakText(text, langKey, btn) {
+    const isSpeaking = typeof speechSynthesis.speaking === 'boolean' && speechSynthesis.speaking;
+    if (isSpeaking) {
+      try { speechSynthesis.cancel(); } catch { /* ignore */ }
+      if (btn.dataset.speaking === '1') {
+        btn.dataset.speaking = '';
+        btn.classList.remove('epf-speak-active');
+        return;
+      }
+      document.querySelectorAll('.epf-speak-active').forEach(b => {
+        b.dataset.speaking = '';
+        b.classList.remove('epf-speak-active');
+      });
+    }
+
+    const voiceMap = getVoiceMap();
+    const voice    = voiceMap[langKey] || null;
+    if (!voice && langKey !== 'en') return; // no voice available, skip silently
+
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang  = LANG_META[langKey].speech;
+    if (voice) utt.voice = voice;
+    utt.rate  = 0.95;
+
+    btn.dataset.speaking = '1';
+    btn.classList.add('epf-speak-active');
+
+    utt.onend = utt.onerror = () => {
+      btn.dataset.speaking = '';
+      btn.classList.remove('epf-speak-active');
+    };
+
+    speechSynthesis.speak(utt);
+  }
+
+  function hasSpeechSupport(langKey) {
+    if (!('speechSynthesis' in window)) return false;
+    const voices = speechSynthesis.getVoices();
+    // Voices not loaded yet — show button optimistically, hide on error.
+    if (!voices.length) return true;
+    return !!getVoiceMap()[langKey];
+  }
+
+  let _enabled    = true;
+  let _langs      = { en: false, id: true, vi: true, zh: false, ko: false, ja: false };
+  let _langsOrder = ['en', 'id', 'vi', 'zh', 'ko', 'ja'];
+  let _anchor     = { top: false, bottom: false, left: false, right: false };
+  let _fontSize   = 13;
   let _opacity = 100;
   let _tip      = null;
   let _activeId = 0;
@@ -860,27 +1679,43 @@
 
   // ── Init ──────────────────────────────────────────────────────────────────────
 
+  function isPageActive() {
+    return window.__EPF_PAGE_ACTIVE__ === true;
+  }
+
   chrome.storage.local.get(['epf_config', CACHE_KEY], (data) => {
     const cfg = data.epf_config || {};
-    _enabled = cfg.translateEnabled ?? true;
-    _langs   = cfg.translateLangs   ?? { en: false, id: true, vi: true, zh: false };
-    _anchor  = cfg.translateAnchor  ?? { top: false, bottom: false, left: false, right: false };
+    _enabled    = cfg.translateEnabled    ?? false;
+    _langs      = cfg.translateLangs      ?? { en: false, id: true, vi: true, zh: false, ko: false, ja: false };
+    _langsOrder = cfg.translateLangsOrder ?? ['en', 'id', 'vi', 'zh', 'ko', 'ja'];
+    _anchor     = cfg.translateAnchor     ?? { top: false, bottom: true, left: false, right: true };
+    _fontSize   = cfg.translateFontSize   ?? 13;
     _opacity = cfg.translateOpacity ?? 100;
 
     const saved = data[CACHE_KEY] || {};
     for (const [k, v] of Object.entries(saved)) _mem.set(k, v);
 
-    if (_enabled) attachListeners();
+    // isPageActive() may still be false due to race with main IIFE's loadConfig.
+    // Compute page-active directly from config patterns as the source of truth.
+    const patterns = cfg.urlPatterns || ['*'];
+    const pageIsActive = patterns.some(p => {
+      if (p === '*' || p === '<all_urls>') return true;
+      try { return new RegExp('^' + p.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*') + '$').test(location.href); }
+      catch { return false; }
+    });
+    if (_enabled && pageIsActive) attachListeners();
   });
 
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg.type === 'SAVE_CONFIG') {
       const wasEnabled = _enabled;
-      _enabled = msg.config?.translateEnabled ?? true;
-      _langs   = msg.config?.translateLangs   ?? _langs;
-      _anchor  = msg.config?.translateAnchor  ?? _anchor;
-      _opacity = msg.config?.translateOpacity ?? _opacity;
-      if (!_enabled) hideTip();
+      _enabled    = msg.config?.translateEnabled    ?? false;
+      _langs      = msg.config?.translateLangs      ?? _langs;
+      _langsOrder = msg.config?.translateLangsOrder ?? _langsOrder;
+      _anchor     = msg.config?.translateAnchor     ?? _anchor;
+      _opacity    = msg.config?.translateOpacity    ?? _opacity;
+      _fontSize   = msg.config?.translateFontSize   ?? _fontSize;
+      if (!_enabled || !isPageActive()) hideTip();
       else if (!wasEnabled) attachListeners();
       return;
     }
@@ -901,14 +1736,31 @@
   }
 
   function onMouseUp(e) {
-    if (!_enabled) return;
+    if (!_enabled || !isPageActive()) return;
     if (_tip && _tip.contains(e.target)) return;
     setTimeout(() => {
       const sel  = window.getSelection();
-      const text = sel?.toString().trim();
-      if (!text || text.length < MIN_CHARS || text.length > MAX_CHARS) { hideTip(); return; }
+      let text   = sel?.toString().trim();
+      if (!text || shouldSkip(text) || text.length > MAX_CHARS) { hideTip(); return; }
       const range = sel.rangeCount ? sel.getRangeAt(0) : null;
       if (!range) return;
+
+      // If selection looks like a partial word (no spaces, letters/digits only),
+      // expand to full word boundaries so "omp" from "Company" becomes "Company".
+      if (!/\s/.test(text) && /^[\w'-]+$/.test(text)) {
+        const node = range.startContainer;
+        if (node.nodeType === Node.TEXT_NODE) {
+          const full  = node.textContent;
+          let   start = range.startOffset;
+          let   end   = range.endOffset;
+          const isWordChar = c => /[\w'-]/.test(c);
+          while (start > 0 && isWordChar(full[start - 1])) start--;
+          while (end < full.length && isWordChar(full[end])) end++;
+          const expanded = full.slice(start, end).trim();
+          if (expanded.length >= MIN_CHARS && expanded.length <= MAX_CHARS) text = expanded;
+        }
+      }
+
       showTip(text, range.getBoundingClientRect());
     }, 20);
   }
@@ -923,11 +1775,12 @@
     const srcKey  = srcCode === 'zh-CN' ? 'zh' : srcCode === 'vi' ? 'vi' : srcCode === 'id' ? 'id' : 'en';
     const cKey    = srcCode + '||' + text;
 
-    const targets = Object.keys(LANG_META).filter(l => _langs[l] && l !== srcKey);
+    const targets = _langsOrder.filter(l => LANG_META[l] && _langs[l] && l !== srcKey);
     if (!targets.length) return;
 
     const tip = buildTip(srcCode);
-    tip.style.opacity = (_opacity / 100).toFixed(2);
+    tip.style.setProperty('--tip-bg-alpha', (_opacity / 100).toFixed(2));
+    tip.style.fontSize = _fontSize + 'px';
     _tip = tip;
     document.body.appendChild(tip);
     positionTip(tip, selRect, _anchor);
@@ -1122,6 +1975,18 @@
         icon.title = 'Cached';
         icon.textContent = '\u26a1';
         row.appendChild(icon);
+      }
+      // Speaker button — only when speech synthesis is available for this language.
+      if (hasSpeechSupport(l)) {
+        const btn = document.createElement('button');
+        btn.className = 'epf-speak-btn';
+        btn.title = 'Read aloud';
+        btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd"/></svg>';
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          speakText(value, l, btn);
+        });
+        row.appendChild(btn);
       }
     } else {
       // failed

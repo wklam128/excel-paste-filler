@@ -2,8 +2,9 @@
   "manifest_version": 3,
   "name": "Excel Paste Filler",
   "short_name": "EPF",
-  "version": "2.1.1",
-  "description": "Copy cells from Excel, paste into any form field — adjacent fields auto-fill in order. All local.",
+  "version": "2.1.2",
+  "description": "Paste Excel cells into any web form and auto-fill adjacent fields in order. Select any text to instantly translate it into your chosen languages. All local.",
+  "author": "Jeff Lam",
 
   "permissions": [
     "storage",

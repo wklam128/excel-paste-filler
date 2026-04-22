@@ -7,6 +7,9 @@
 </head>
 <body>
 
+<!-- Auto-save toast -->
+<div id="opts-toast" class="opts-toast" aria-live="polite"></div>
+
 <div class="page">
 
   <header class="page-header">
@@ -15,18 +18,35 @@
       <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
       <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
     </svg>
-    <div>
+    <div style="flex:1">
       <h1>Excel Paste Filler</h1>
       <p>Settings</p>
     </div>
+    <div id="header-version-block" style="text-align:right;opacity:0.85;flex-shrink:0"></div>
   </header>
+
+  <!-- First-install welcome banner (hidden by default, shown via JS) -->
+  <div id="welcome-banner" class="welcome-banner" style="display:none">
+    <div class="welcome-icon">🎉</div>
+    <div class="welcome-text">
+      <strong>Welcome to Excel Paste Filler! <span id="welcome-version"></span></strong>
+      <div id="welcome-release" class="welcome-release"></div>
+      <div id="welcome-author" class="welcome-author"></div>
+      <p>Paste Excel cells into any web form and auto-fill adjacent fields in order. Select any text on the page to instantly translate it. By default the addon is active on <strong>all pages</strong> — restrict it via the <em>Active on These URLs</em> list below, or click the extension icon on any page to quickly add or remove that site.</p>
+    </div>
+    <button id="btn-welcome-close" class="welcome-close" title="Dismiss">✕</button>
+  </div>
 
   <main class="main">
 
-    <!-- Behaviour -->
+    <!-- ① Paste Behaviour -->
     <div class="card">
-      <div class="card-title">Paste Behaviour</div>
-
+      <div class="card-header">
+        <div class="card-header-left">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" style="color:var(--green);flex-shrink:0"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"/></svg>
+          <div class="card-title-inline">Paste Behaviour</div>
+        </div>
+      </div>
       <div class="row">
         <div class="row-left">
           <label for="opt-highlight">Highlight filled fields</label>
@@ -34,7 +54,6 @@
         </div>
         <input type="checkbox" id="opt-highlight" class="toggle">
       </div>
-
       <div class="row">
         <div class="row-left">
           <label for="opt-toast">Show confirmation toast</label>
@@ -42,130 +61,258 @@
         </div>
         <input type="checkbox" id="opt-toast" class="toggle">
       </div>
-
       <div class="row">
         <div class="row-left">
           <label for="opt-skip-empty">Skip empty cells</label>
-          <span class="hint">
-            When a copied cell is blank, move to the next page field without
-            clearing the current one. Useful for sparse data.
-          </span>
+          <span class="hint">When a copied cell is blank, skip to the next field without clearing the current one.</span>
         </div>
         <input type="checkbox" id="opt-skip-empty" class="toggle">
       </div>
-
       <div class="row">
         <div class="row-left">
           <label for="opt-same-type">Same field type only</label>
-          <span class="hint">
-            Only fill fields of the same type as the one you started on
-            (e.g. text inputs only, skipping selects and checkboxes).
-          </span>
+          <span class="hint">Only fill fields of the same type as the starting field (e.g. text inputs only).</span>
         </div>
         <input type="checkbox" id="opt-same-type" class="toggle">
       </div>
     </div>
 
-    <!-- Translation -->
-    <div class="card">
-      <div class="card-title">Selection Translate</div>
-
-      <div class="row">
-        <div class="row-left">
-          <label for="opt-translate">Enable translation tooltip</label>
-          <span class="hint">
-            Select any English or Chinese text on a page to instantly see
-            translations in a tooltip.
-          </span>
+    <!-- ③ Copy Table -->
+    <div class="card" id="copy-table-card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" style="color:var(--green);flex-shrink:0"><path fill-rule="evenodd" d="M5 4a2 2 0 012-2h6a1 1 0 01.707.293l4 4A1 1 0 0118 7v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4zm8 0v3h3l-3-3zM7 9a1 1 0 000 2h6a1 1 0 100-2H7zm0 4a1 1 0 100 2h4a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>
+          <div class="card-title-inline">Copy Table to Clipboard</div>
+          <span class="card-badge" id="copy-table-badge">Disabled</span>
         </div>
-        <input type="checkbox" id="opt-translate" class="toggle">
+        <label class="inline-toggle" for="opt-copy-enabled" title="Enable / disable Copy Table">
+          <input type="checkbox" id="opt-copy-enabled" class="toggle">
+          <span class="inline-toggle-label">Enable</span>
+        </label>
       </div>
-
-      <div id="translate-subopts">
-
-      <div class="row">
-        <div class="row-left">
-          <label>Target languages</label>
-          <span class="hint">Choose which languages appear in the tooltip.</span>
-        </div>
-        <div class="lang-checks">
-          <label class="lang-check"><input type="checkbox" id="opt-tlang-en"> English (EN)</label>
-          <label class="lang-check"><input type="checkbox" id="opt-tlang-id"> Bahasa Indonesia (ID)</label>
-          <label class="lang-check"><input type="checkbox" id="opt-tlang-vi"> Tiếng Việt (VI)</label>
-          <label class="lang-check"><input type="checkbox" id="opt-tlang-zh"> 中文 · Chinese (ZH)</label>
-        </div>
-      </div>
-
-      <div class="row row-anchor">
-        <div class="row-left">
-          <label>Tooltip position</label>
-          <span class="hint">
-            Tick edges to pin the tooltip. Opposite edges cancel out to center.
-            None ticked = auto (follows selection).
-          </span>
-          <span class="anchor-desc" id="anchor-desc">Auto (near selection)</span>
-        </div>
-        <div class="anchor-grid">
-          <div></div>
-          <label class="anchor-btn" for="opt-pos-top">
-            <input type="checkbox" id="opt-pos-top">
-            <span>TOP</span>
-          </label>
-          <div></div>
-          <label class="anchor-btn" for="opt-pos-left">
-            <input type="checkbox" id="opt-pos-left">
-            <span>LEFT</span>
-          </label>
-          <div class="anchor-dot" id="anchor-dot"></div>
-          <label class="anchor-btn" for="opt-pos-right">
-            <input type="checkbox" id="opt-pos-right">
-            <span>RIGHT</span>
-          </label>
-          <div></div>
-          <label class="anchor-btn" for="opt-pos-bottom">
-            <input type="checkbox" id="opt-pos-bottom">
-            <span>BOTTOM</span>
-          </label>
-          <div></div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="row-left">
-          <label for="opt-tip-opacity">Tooltip opacity</label>
-          <span class="hint">Lower value = more transparent. Minimum 20%.</span>
-        </div>
-        <div class="opacity-ctrl">
-          <input type="range" id="opt-tip-opacity" min="20" max="100" step="5" class="opacity-slider">
-          <span id="opt-tip-opacity-val" class="opacity-val">100%</span>
+      <div class="card-body" id="copy-table-body">
+        <div id="copy-table-content">
+          <div class="row">
+            <div class="row-left">
+              <label for="opt-copy-format">Copy with source formatting</label>
+              <span class="hint">Preserve colours and fonts from the page when pasting into Excel or Word.</span>
+            </div>
+            <input type="checkbox" id="opt-copy-format" class="toggle">
+          </div>
+          <div id="copy-format-subopts">
+            <div class="fmt-section-label">Choose which styles to include</div>
+            <div class="fmt-grid">
+              <label class="fmt-card" for="opt-fmt-bg">
+                <input type="checkbox" id="opt-fmt-bg">
+                <span class="fmt-icon">🎨</span>
+                <span class="fmt-card-title">Background</span>
+                <span class="fmt-card-hint">Cell fill colour</span>
+              </label>
+              <label class="fmt-card" for="opt-fmt-color">
+                <input type="checkbox" id="opt-fmt-color">
+                <span class="fmt-icon">🖊</span>
+                <span class="fmt-card-title">Text colour</span>
+                <span class="fmt-card-hint">Font colour</span>
+              </label>
+              <label class="fmt-card" for="opt-fmt-font">
+                <input type="checkbox" id="opt-fmt-font">
+                <span class="fmt-icon">B/</span>
+                <span class="fmt-card-title">Bold &amp; Italic</span>
+                <span class="fmt-card-hint">Font weight &amp; style</span>
+              </label>
+              <label class="fmt-card" for="opt-fmt-align">
+                <input type="checkbox" id="opt-fmt-align">
+                <span class="fmt-icon">≡</span>
+                <span class="fmt-card-title">Alignment</span>
+                <span class="fmt-card-hint">Text position</span>
+              </label>
+              <label class="fmt-card" for="opt-fmt-size">
+                <input type="checkbox" id="opt-fmt-size">
+                <span class="fmt-icon">Aa</span>
+                <span class="fmt-card-title">Font size</span>
+                <span class="fmt-card-hint">Relative sizing</span>
+              </label>
+              <label class="fmt-card" for="opt-fmt-border">
+                <input type="checkbox" id="opt-fmt-border">
+                <span class="fmt-icon">▦</span>
+                <span class="fmt-card-title">Borders</span>
+                <span class="fmt-card-hint">Cell border lines</span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="row">
-        <div class="row-left">
-          <label>Translation cache</label>
-          <span class="hint" id="cache-info">Calculating…</span>
-        </div>
-        <button id="btn-clear-cache" class="btn btn-danger">Clear Cache</button>
-      </div>
-
-      </div><!-- #translate-subopts -->
     </div>
 
-    <!-- Target URLs -->
+    <!-- ④ Selection Translate -->
+    <div class="card" id="translate-card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" style="color:var(--green);flex-shrink:0"><path fill-rule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-3.754 1 1 0 111.924-.558c.255.882.57 1.72.937 2.512a18.912 18.912 0 001.116-3.137H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.992a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.724 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.99A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z" clip-rule="evenodd"/></svg>
+          <div class="card-title-inline">Selection Translate</div>
+          <span class="card-badge" id="translate-badge">Disabled</span>
+        </div>
+        <label class="inline-toggle" for="opt-translate" title="Enable / disable translation tooltip">
+          <input type="checkbox" id="opt-translate" class="toggle">
+          <span class="inline-toggle-label">Enable</span>
+        </label>
+      </div>
+      <div class="card-body" id="translate-body">
+        <div id="translate-subopts">
+          <div class="translate-section-label">Target Languages</div>
+          <div class="row row-langs">
+            <div class="row-left">
+              <label>Translate selected text into</label>
+              <span class="hint">Enable languages · drag to set tooltip order · number = sequence.</span>
+            </div>
+            <div class="lang-cards-wrap">
+              <div class="lang-cards" id="lang-cards">
+                <label class="lang-card" draggable="true" data-lang="en">
+                  <input type="checkbox" id="opt-tlang-en">
+                  <span class="lang-seq"></span>
+                  <span class="lang-grip">⋮⋮</span>
+                  <span class="lang-flag">🇺🇸</span>
+                  <span class="lang-name">English</span>
+                  <span class="lang-code">EN</span>
+                </label>
+                <label class="lang-card" draggable="true" data-lang="id">
+                  <input type="checkbox" id="opt-tlang-id">
+                  <span class="lang-seq"></span>
+                  <span class="lang-grip">⋮⋮</span>
+                  <span class="lang-flag">🇮🇩</span>
+                  <span class="lang-name">Indonesia</span>
+                  <span class="lang-code">ID</span>
+                </label>
+                <label class="lang-card" draggable="true" data-lang="vi">
+                  <input type="checkbox" id="opt-tlang-vi">
+                  <span class="lang-seq"></span>
+                  <span class="lang-grip">⋮⋮</span>
+                  <span class="lang-flag">🇻🇳</span>
+                  <span class="lang-name">Tiếng Việt</span>
+                  <span class="lang-code">VI</span>
+                </label>
+                <label class="lang-card" draggable="true" data-lang="zh">
+                  <input type="checkbox" id="opt-tlang-zh">
+                  <span class="lang-seq"></span>
+                  <span class="lang-grip">⋮⋮</span>
+                  <span class="lang-flag">🇨🇳</span>
+                  <span class="lang-name">中文</span>
+                  <span class="lang-code">ZH</span>
+                </label>
+                <label class="lang-card" draggable="true" data-lang="ko">
+                  <input type="checkbox" id="opt-tlang-ko">
+                  <span class="lang-seq"></span>
+                  <span class="lang-grip">⋮⋮</span>
+                  <span class="lang-flag">🇰🇷</span>
+                  <span class="lang-name">한국어</span>
+                  <span class="lang-code">KO</span>
+                </label>
+                <label class="lang-card" draggable="true" data-lang="ja">
+                  <input type="checkbox" id="opt-tlang-ja">
+                  <span class="lang-seq"></span>
+                  <span class="lang-grip">⋮⋮</span>
+                  <span class="lang-flag">🇯🇵</span>
+                  <span class="lang-name">日本語</span>
+                  <span class="lang-code">JA</span>
+                </label>
+              </div>
+              <div class="lang-drag-hint">⋮⋮ Drag cards to reorder · click to toggle</div>
+            </div>
+          </div>
+          <div class="translate-section-label">Tooltip Appearance</div>
+          <div class="row translate-sliders-row">
+            <div class="translate-slider-group">
+              <label class="translate-slider-label" for="opt-tip-fontsize">
+                <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                Font size
+              </label>
+              <div class="translate-slider-ctrl">
+                <input type="range" id="opt-tip-fontsize" min="11" max="16" step="1" class="opacity-slider">
+                <span id="opt-tip-fontsize-val" class="opacity-val">13px</span>
+              </div>
+            </div>
+            <div class="translate-slider-group">
+              <label class="translate-slider-label" for="opt-tip-opacity">
+                <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z" clip-rule="evenodd"/></svg>
+                Opacity
+              </label>
+              <div class="translate-slider-ctrl">
+                <input type="range" id="opt-tip-opacity" min="0" max="100" step="5" class="opacity-slider">
+                <span id="opt-tip-opacity-val" class="opacity-val">100%</span>
+              </div>
+            </div>
+          </div>
+          <div class="translate-section-label">Tooltip Position</div>
+          <div class="row row-anchor">
+            <div class="row-left">
+              <label>Pin to screen edge</label>
+              <span class="hint">Tick edges to pin. Opposite edges cancel to centre. None = follows selection.</span>
+              <span class="anchor-desc" id="anchor-desc">Auto (near selection)</span>
+            </div>
+            <div class="anchor-grid">
+              <div></div>
+              <label class="anchor-btn" for="opt-pos-top"><input type="checkbox" id="opt-pos-top"><span>TOP</span></label>
+              <div></div>
+              <label class="anchor-btn" for="opt-pos-left"><input type="checkbox" id="opt-pos-left"><span>LEFT</span></label>
+              <div class="anchor-dot" id="anchor-dot"></div>
+              <label class="anchor-btn" for="opt-pos-right"><input type="checkbox" id="opt-pos-right"><span>RIGHT</span></label>
+              <div></div>
+              <label class="anchor-btn" for="opt-pos-bottom"><input type="checkbox" id="opt-pos-bottom"><span>BOTTOM</span></label>
+              <div></div>
+            </div>
+          </div>
+          <div class="translate-section-label">Provider &amp; Cache</div>
+          <div class="row">
+            <div class="row-left">
+              <label>Translation provider</label>
+              <span class="hint">Service used to translate selected text.</span>
+            </div>
+            <div class="provider-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+              Google Translate
+            </div>
+          </div>
+          <div class="row">
+            <div class="row-left">
+              <label>Translation cache</label>
+              <span class="hint" id="cache-info">Calculating…</span>
+            </div>
+            <button id="btn-clear-cache" class="btn btn-danger">Clear Cache</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ④ Active URLs — advanced, manageable via popup -->
     <div class="card">
-      <div class="card-title">Active on These URLs</div>
+      <div class="card-header">
+        <div class="card-header-left">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" style="color:var(--green);flex-shrink:0"><path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd"/></svg>
+          <div class="card-title-inline">Active on These URLs</div>
+        </div>
+      </div>
       <p class="card-desc">
-        One URL pattern per line. <code>*</code> matches every page.
-        Use patterns like <code>https://app.example.com/*</code> to restrict to specific sites.
+        One URL pattern per line. <code>*</code> = all pages.
+        Use <code>https://app.example.com/*</code> to restrict to a specific site.
+        Tip: use the extension popup to quickly add or remove the current page.
       </p>
-      <textarea id="opt-urls" class="textarea" rows="5"
+      <textarea id="opt-urls" class="textarea" rows="4"
         placeholder="*&#10;https://crm.company.com/*"></textarea>
     </div>
 
-    <div class="save-row">
-      <button id="btn-save" class="btn">Save Settings</button>
-      <span id="save-msg" class="save-msg"></span>
+    <!-- ⑤ Danger zone -->
+    <div class="card danger-card">
+      <div class="card-title" style="color:#dc2626">Danger Zone</div>
+      <div class="row">
+        <div class="row-left">
+          <label>Reset to factory defaults</label>
+          <span class="hint">Restores all settings including URL list. This cannot be undone.</span>
+        </div>
+        <button id="btn-reset-defaults" class="btn btn-danger">Reset All</button>
+      </div>
     </div>
 
   </main>
